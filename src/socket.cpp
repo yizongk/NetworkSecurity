@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <string>
 #include "socket.h"
 
 /* If socket fails to construct, it means fd is set to -1 */
@@ -19,7 +20,8 @@ Socket::~Socket() {
 /* Returns this instance of Socket has a file descriptor assigned to it */
 bool Socket::isReady() {
     if( fd == -1 )
-        return false;
+    return false;
+
     return true;
 }
 
