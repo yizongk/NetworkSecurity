@@ -15,6 +15,8 @@ class Socket {
         bool isReady();
         std::string getErrorStr();
 
+        
+
         /* ~For testing purposes~ */    //
         int getFd() {           //
             return this->fd;            //

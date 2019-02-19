@@ -20,7 +20,7 @@ Socket::~Socket() {
 /* Returns this instance of Socket has a file descriptor assigned to it */
 bool Socket::isReady() {
     if( fd == -1 )
-    return false;
+        return false;
 
     return true;
 }

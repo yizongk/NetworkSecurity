@@ -8,8 +8,15 @@ using namespace std;
  * - file descriptor is make (fd != -1)
  */
 bool test_creation_of_socket(Socket& Dummy) {
-    if( Dummy.getFd() == -1 )
+    if( Dummy.getFd() == -1 ) {
+        cout << "(X) " << "test_creation_of_socket()..." << endl;
+        cout<< "\t" << "Creation of socket resulted in no file descriptor" << endl;
+        cout << "\t" << "Error(" << Dummy.getErrorCode() << ") - " << Dummy.getErrorStr() << endl;
+
         return false;
+    }
+
+    cout << "test_creation_of_socket()..." << endl;
     return true;
 }
 
@@ -21,10 +28,20 @@ int main(int argc, char *argv[]) {
     // Creation of socket
     pass = test_creation_of_socket(dummy);
 
+
+
+
+
+
+
+
+
+
+
     if( pass ) 
-        cout << "all tests passed" << endl;
+        cout << "\n" << "all tests passed" << endl;
     else 
-        cout << "some tests or all tests failed" << endl;
+        cout << "\n" << "some tests or all tests failed" << endl;
 
     return 0;
 }
