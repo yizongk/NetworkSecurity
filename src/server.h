@@ -2,7 +2,6 @@
 #define SERVER_H
 
 #include <string>
-#include <sys/socket.h>
 #include "socket.h"
 
 class Server {
@@ -13,6 +12,7 @@ class Server {
         /* Core setup fcts */
         Server();
         Server(int);
+        ~Server();
         bool connect_socket(int);
         bool close_socket();
 
