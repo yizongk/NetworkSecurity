@@ -3,6 +3,7 @@
 
 #include <sys/socket.h>
 #include <linux/if_packet.h>
+#include <linux/if_ether.h>
 #include <string.h>
 
 class Socket {
@@ -10,7 +11,7 @@ class Socket {
         int fd;
         sockaddr_ll myaddr;
         int error_code;
-        
+
     public:
         Socket();
         ~Socket();

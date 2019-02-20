@@ -1,11 +1,18 @@
 #include <errno.h>
 #include <string>
+#include <cstring>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <linux/if_ether.h>
 #include "socket.h"
 
 #define handle_error(msg) \
-    do { perror(msg); exit(EXIT_FAILURE); } while (0)
+    do { \
+    perror(msg); \
+    printf("errno: %d\n", errno); \
+    system( ( "errno " + std::to_string(errno) ).c_str() ); \
+    exit(EXIT_FAILURE); \
+    } while (0)
 
 /* Default constructor */
 Socket::Socket() {
