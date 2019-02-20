@@ -9,10 +9,17 @@
 
 /* Default constructor */
 Socket::Socket() {
-    int fd = 0;
-    //std::string sock_path = "socket_fd";
-    int error_code = 0;
+    this->fd = 0;
+    this->myaddr.sll_family = AF_PACKET;        // unsigned short
+    this->myaddr.sll_protocol = 0;               // unsigned short
+    this->myaddr.sll_ifindex = 0;                // int 
+    this->myaddr.sll_hatype = 0;                 // unsigned short
+    this->myaddr.sll_pkttype;                // unsigned char
+    this->myaddr.sll_halen;                  // unsigned char
+    this->myaddr.sll_addr;;                   // unsigned char[8]
+    this->error_code = 0;
 }
+
 
 /* Default destructor */
 Socket::~Socket() {
@@ -35,19 +42,14 @@ bool Socket::openSocket() {
 
 /* Assigning a name to a socket 
  * In other word, giving the socket an address, and telling it the size (in bytes) of that specific address
- * fd now has a physical file on file system somewhere
+ * fd now has a physical file on file system somewhere, probably lol, i don't know
+ * for bind only sll_protocol and sll_ifindex are used (Taken from https://linux.die.net/man/7/packet)
  * */
-bool Socket::bindSocket(unsigned short sll_protocol_in, int sll_ifindex_in, unsigned char sll_halen_in, unsigned char* sll_addr_in, unsigned int sll_addr_in_len = 8) {
-    sockaddr_ll myaddr;
-    memset(&myaddr, 0, sizeof(sockaddr_ll));    //*memset(void *s, int c, size_t n)  -->  fills the first n bytes of the memory area pointed to by s with the constant byte c. Clears the structure
-
-    myaddr.sll_family = AF_PACKET;
-    myaddr.sll_protocol = ?;
-    myaddr.sll_ifindex = ?;
-    myaddr.sll_halen = ?;
-    for( int i = 0; i < sll_addr_in_len; ++i ) {
-        myaddr.sll_addr[i] = sll_addr_in[i];
-    }
+bool Socket::bindSocket(unsigned short sll_protocol_in, int sll_ifindex_in) {
+    memset(&(this->myaddr), 0, sizeof(sockaddr_ll));    //*memset(void *s, int c, size_t n)  -->  fills the first n bytes of the memory area pointed to by s with the constant byte c. Clears the structure
+    
+    this->myaddr.sll_protocol = sll_protocol_in;
+    this->myaddr.sll_ifindex = sll_ifindex_in;
 
     if( bind( this->fd, (struct sockaddr *) &myaddr, sizeof(sockaddr_ll) ) != 0 ) {
         error_code = errno;
@@ -61,7 +63,7 @@ bool Socket::bindSocket(unsigned short sll_protocol_in, int sll_ifindex_in, unsi
 /* delete a name (the fd that was binded) and possibly the file it refers to 
  * in other word, unbinding it
  * */
-bool Socket::unlinkeSocket() {
+bool Socket::unlinkSocket() {
 
 }
 
