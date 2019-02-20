@@ -13,6 +13,7 @@ class Socket {
         ~Socket();
 
         bool openSocket();
+        //bool bindSocket();
         bool closeSocket();
 
 

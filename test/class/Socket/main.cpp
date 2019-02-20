@@ -5,34 +5,38 @@
 using namespace std;
 
 /* Passes if the following condition are met:
- * - file descriptor is make (fd != -1)
+ * - file descriptor is made 
+ * 
+ * Consequence of not passing:
+ *  - opening of socket resulted in no file descriptor
  */
 bool test_opening_of_socket(Socket& dummy) {
-    if( dummy.openSocket() == false ) {
-        cout << "(X) " << "test_opening_of_socket()..." << endl;
-        cout << "\t" << "opening of socket resulted in no file descriptor" << endl;
-        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
+    cout << "test_opening_of_socket()..." << endl;
 
+    if( dummy.openSocket() == false ) {
+        cout << "(X) " << endl;
+        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
         return false;
     }
-
-    cout << "test_opening_of_socket()..." << endl;
+    
     return true;
 }
 
-/* 
+/* Passes if the following condition are met:
+ * - file descriptor unassigned
  *
+ * Consequence of not passing:
+ *  - fd could be a bad fd, or fd could be lock, who knows.
  */
 bool test_closing_of_socket(Socket& dummy) {
-    if( dummy.closeSocket() == false ) {
-        cout << "(X) " << "test_closing_of_socket()..." << endl;
-        cout << "\t" << "closinging of socket resulted in no file descriptor" << endl;
-        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
+    cout << "test_closing_of_socket()..." << endl;
 
+    if( dummy.closeSocket() == false ) {
+        cout << "(X) " << endl;
+        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
         return false;
     }
-
-    cout << "test_closing_of_socket()..." << endl;
+    
     return true;
 }
 

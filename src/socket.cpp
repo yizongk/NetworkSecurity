@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include "socket.h"
 
+#define handle_error(msg) \
+    do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
 /* Default constructor */
 Socket::Socket() {
     
@@ -13,18 +16,30 @@ Socket::~Socket() {
     
 }
 
-/* If socket fails to construct, it means fd is set to -1 */
+/* If socket fails to construct, it means fd is set to -1 
+*  This opens the socket to RAW communition
+*/
 bool Socket::openSocket() {
-    this->fd = socket(AF_PACKET, SOCK_RAW, 0);
-
-    if( this->fd == -1 ) {
+    if( ( this->fd = socket(AF_PACKET, SOCK_RAW, 0) ) == -1 ) {
         // Compare errno, and find out why.
         error_code = errno;
+        handle_error("opening socket");
         return false;
     }
 
     return true;
 }
+
+/* Assigning a name to a socket 
+ * In other word, giving the socket an address, and telling it the size (in bytes) of that specific address
+ * */
+/* bool Socket::bindSocket() {
+    if() {
+
+    }
+
+    return true;
+} */
 
 /* Release the resource associated with file descriptor of this socket */
 bool Socket::closeSocket() {
