@@ -12,10 +12,18 @@ class Socket {
         Socket();
         ~Socket();
 
-        bool isReady();
-        std::string getErrorStr();
+        bool openSocket();
+        bool closeSocket();
 
-        
+
+
+
+
+
+
+
+
+        std::string getErrorStr();
 
         /* ~For testing purposes~ */    //
         int getFd() {           //

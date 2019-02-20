@@ -7,28 +7,50 @@ using namespace std;
 /* Passes if the following condition are met:
  * - file descriptor is make (fd != -1)
  */
-bool test_creation_of_socket(Socket& Dummy) {
-    if( Dummy.getFd() == -1 ) {
-        cout << "(X) " << "test_creation_of_socket()..." << endl;
-        cout<< "\t" << "Creation of socket resulted in no file descriptor" << endl;
-        cout << "\t" << "Error(" << Dummy.getErrorCode() << ") - " << Dummy.getErrorStr() << endl;
+bool test_opening_of_socket(Socket& dummy) {
+    if( dummy.openSocket() == false ) {
+        cout << "(X) " << "test_opening_of_socket()..." << endl;
+        cout << "\t" << "opening of socket resulted in no file descriptor" << endl;
+        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
 
         return false;
     }
 
-    cout << "test_creation_of_socket()..." << endl;
+    cout << "test_opening_of_socket()..." << endl;
     return true;
 }
+
+/* 
+ *
+ */
+bool test_closing_of_socket(Socket& dummy) {
+    if( dummy.closeSocket() == false ) {
+        cout << "(X) " << "test_closing_of_socket()..." << endl;
+        cout << "\t" << "closinging of socket resulted in no file descriptor" << endl;
+        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
+
+        return false;
+    }
+
+    cout << "test_closing_of_socket()..." << endl;
+    return true;
+}
+
+
+
+
+
 
 int main(int argc, char *argv[]) {
     bool pass = false;
     Socket dummy;
     
     /* Feature testing */
-    // Creation of socket
-    pass = test_creation_of_socket(dummy);
+    // Opening the socket
+    pass = test_opening_of_socket(dummy);
 
-
+    // Closing the socket
+    pass = test_closing_of_socket(dummy);
 
 
 
