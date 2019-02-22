@@ -1,6 +1,6 @@
 #include <net/if.h>
 #include <iostream>
-#include <string.h>struct ifreq ifr;
+#include <string.h>
 
 using namespace std;
 // List all sll_ifindex by name from 0 to 100

@@ -51,7 +51,7 @@ bool test_binding_of_socket(Socket& dummy) {
     cout << "testing_binding_of_socket()" << endl;
 
     unsigned short sll_protocol = ETH_P_IP;
-    int sll_ifindex = 0;        // 0 matches any interface
+    int sll_ifindex = 1;        // 0 matches any interface, 1 is loopback device
 
     if( dummy.bindSocket(sll_protocol, sll_ifindex) == false ) {
         cout << "(X) " << endl;
@@ -68,7 +68,7 @@ bool test_binding_of_socket(Socket& dummy) {
  *  Consequence of not passing:
  *  - Socket is not recieving msg
  *  */
-/* bool test_recvmsg_of_socket(Socket& dummy) {
+bool test_recvmsg_of_socket(Socket& dummy) {
     cout << "test_recvmsg_of_socket()..." << endl;
 
     size_t buff_len = 100;
@@ -83,7 +83,7 @@ bool test_binding_of_socket(Socket& dummy) {
     delete[] buff;
     return true;
 }
- */
+
 
 
 int main(int argc, char *argv[]) {
@@ -96,14 +96,14 @@ int main(int argc, char *argv[]) {
 
     // Binding the socket
     pass = test_binding_of_socket(dummy);
-/* 
+
     // Recieve message from socket
     pass =  test_recvmsg_of_socket(dummy);
     
     // Closing the socket
-    pass = test_closing_of_socket(dummy);
+    //pass = test_closing_of_socket(dummy);
 
-     */
+    
 
 
 

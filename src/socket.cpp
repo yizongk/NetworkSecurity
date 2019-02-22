@@ -9,7 +9,6 @@
 #define handle_error(msg) \
     do { \
     perror(msg); \
-    printf("errno: %d\n", errno); \
     system( ( "errno " + std::to_string(errno) ).c_str() ); \
     exit(EXIT_FAILURE); \
     } while (0)
@@ -63,6 +62,12 @@ printf("memset() done.\n");
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
 
     unsigned char *out = new unsigned char[4];
+    /* sockaddr_ll out_addr;
+    out_addr.sll_family = AF_PACKET;
+    out_addr.sll_addr = ;
+    out_addr.sll_halen = ;
+    out_addr.sll_ifindex = 1;
+    out_addr.sll_protocol = ETH_P_IP; */
     //sendto(fd,out,4,0,NULL,0);       //ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
     if( ( act_buf_len = sendto(fd,out,4,0,NULL,0) ) < 0 ) {
         error_code = errno;
