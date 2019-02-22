@@ -16,9 +16,12 @@ class Socket {
         Socket();
         ~Socket();
 
+        bool isValid() const;
+
         bool openSocket();
-        bool bindSocket(unsigned short sll_protocol_in, int sll_ifindex_in);
-        bool unlinkSocket();
+        bool getMsg(void *buf, size_t len, int flags);
+        bool bindSocket(unsigned short sll_protocol_in, int sll_ifindex_in);    /* Work on hold, need to test if raw port can already receive data. */
+        bool unlinkSocket();        /* Need work */
         bool closeSocket();
 
 

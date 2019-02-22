@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <linux/if_ether.h>
 #include "../../../src/socket.h"
 
 using namespace std;
@@ -28,7 +29,7 @@ bool test_opening_of_socket(Socket& dummy) {
  * Consequence of not passing:
  * - fd could be a bad fd, or fd could be lock, who knows.
  */
-bool test_closing_of_socket(Socket& dummy) {
+/* bool test_closing_of_socket(Socket& dummy) {
     cout << "test_closing_of_socket()..." << endl;
 
     if( dummy.closeSocket() == false ) {
@@ -38,7 +39,7 @@ bool test_closing_of_socket(Socket& dummy) {
     }
     
     return true;
-}
+} */
 
 /*  Passess if the following condition are met:
  *  - NOT SURE
@@ -49,8 +50,8 @@ bool test_closing_of_socket(Socket& dummy) {
 bool test_binding_of_socket(Socket& dummy) {
     cout << "testing_binding_of_socket()" << endl;
 
-    unsigned short sll_protocol = 1;
-    int sll_ifindex = 1;
+    unsigned short sll_protocol = ETH_P_IP;
+    int sll_ifindex = 0;        // 0 matches any interface
 
     if( dummy.bindSocket(sll_protocol, sll_ifindex) == false ) {
         cout << "(X) " << endl;
@@ -61,7 +62,28 @@ bool test_binding_of_socket(Socket& dummy) {
     return true;
 }
 
+/*  Passess if the following condition are met:
+ *  - Message is recieved from socket to buf
+ * 
+ *  Consequence of not passing:
+ *  - Socket is not recieving msg
+ *  */
+/* bool test_recvmsg_of_socket(Socket& dummy) {
+    cout << "test_recvmsg_of_socket()..." << endl;
 
+    size_t buff_len = 100;
+    unsigned char *buff = new unsigned char[buff_len];
+
+    if( dummy.getMsg(buff,buff_len,0) == false ) {
+        cout << "(X) " << endl;
+        cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
+        return false;
+    }
+
+    delete[] buff;
+    return true;
+}
+ */
 
 
 int main(int argc, char *argv[]) {
@@ -72,11 +94,16 @@ int main(int argc, char *argv[]) {
     // Opening the socket
     pass = test_opening_of_socket(dummy);
 
+    // Binding the socket
+    pass = test_binding_of_socket(dummy);
+/* 
+    // Recieve message from socket
+    pass =  test_recvmsg_of_socket(dummy);
+    
     // Closing the socket
     pass = test_closing_of_socket(dummy);
 
-    // Binding the socket
-    pass = test_binding_of_socket(dummy);
+     */
 
 
 
