@@ -153,11 +153,11 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     memcpy(ether_frame + 12, "hello world!", 100);
 
     // Report source MAC address to stdout.
-    /* printf ("\tMAC address for interface %s is ", interface);
+    printf ("\tMAC address for interface %s is ", interface);
     for (int i=0; i<6; i++) {
         printf ("%02x:", src_mac[i]);
     }
-    printf("\n"); */
+    printf("\n");
 
     // Setting up the sockadd_ll
     struct sockaddr_ll device;
@@ -174,41 +174,15 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     device.sll_halen = ETH_ALEN;
     device.sll_ifindex = if_nametoindex("wlp59s0");
     device.sll_protocol = htons(ETH_P_ALL);
-    //struct ether_addr *ea = NULL;
-    //ea = ether_aton("9c:b6:d0:ff:c8:75");
-    //ea = ether_aton("00:00:00:00:00:00");
-    /* if( !ea ) {
-        errno = 6;
-        error_code = errno;
-        handle_error("Socket::getfrom()->error converting Hardware addr. ERRNO doens't make sense here. It's okay");
-        return false;
-    } */
-    //memcpy(out_addr.sll_addr, ea->ether_addr_octet, ETH_ALEN);
-    memcpy (device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
     
-    /* printf("sll_family(unsigned short): '%u'\n", device.sll_family);
-    printf("sll_protocol(__be16): '%u'\n", device.sll_protocol);
-    printf("sll_ifindex(int): '%u'\n", device.sll_ifindex);
-    printf("sll_hatype(unsigned short): '%u'\n", device.sll_hatype);
-    printf("sll_pkttype(unsigned char): '%u'\n", device.sll_pkttype);
-    printf("sll_halen(unsigned char): '%u'\n", device.sll_halen);
-    printf("sll_addr(unsigned char)[]: '");
-    for(int i = 0; i < 8; ++i) {
-        printf("%02x:", device.sll_addr[i]);
-    }
-    printf("'\n");  */
+    memcpy (device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
 
-    // Ethernet frame length = ethernet header (MAC + MAC + ethernet type) + ethernet data (IP header + TCP header)
-    //frame_length = 6 + 6 + 2 + IP4_HDRLEN + TCP_HDRLEN;
-
-    //sendto(fd,out,4,0,NULL,0);       //ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
     if( ( bytes = sendto(this->fd,ether_frame,frame_length,0,(struct sockaddr *)&device,sizeof(struct sockaddr_ll)) ) < 0 ) {
-    //if( ( act_buf_len = sendto(this->fd,out,4,0,(struct sockaddr *)&this->myaddr, sizeof(this->myaddr)) ) < 0 ) { 
         error_code = errno;
         handle_error("Socket::sendMsg()");
         return false;
     }
-    //printf("\tbytes send:'%lu'\n\tether_frame:'%02x'\n\tframe_length:'%u'\n", bytes, ether_frame, frame_length);
+    printf("\tbytes send:'%lu'\n\tether_frame:'%02x'\n\tframe_length:'%u'\n", bytes, ether_frame, frame_length);
 
     // Clean up dynamically allocated resources
     delete ether_frame;
@@ -239,7 +213,6 @@ bool Socket::recvMsg(unsigned char *buf, size_t len) {
         return false;
     }
     printf("\tGot Message:'%s'\n", buf);
-printf("\trecvfrom() done.\n");
 
     /* ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
                         struct sockaddr *src_addr, socklen_t *addrlen); */
