@@ -143,14 +143,15 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     // Fill out ethernet frame header.
 
     // Ethernet frame length = ethernet header (MAC + MAC + ethernet type) + ethernet data (IP header + TCP header)
-    frame_length = 6 + 6 + 2 + IP4_HDRLEN + TCP_HDRLEN;
+    //frame_length = 6 + 6 + 2 + IP4_HDRLEN + TCP_HDRLEN;
+    frame_length = 100;
 
     // Destination and Source MAC addresses
-    memcpy (ether_frame, dst_mac, 6 * sizeof (uint8_t));
-    memcpy (ether_frame + 6, src_mac, 6 * sizeof (uint8_t));
+    /* memcpy (ether_frame, dst_mac, 6 * sizeof (uint8_t));
+    memcpy (ether_frame + 6, src_mac, 6 * sizeof (uint8_t)); */
 
     //strncpy( (char*)ether_frame, "Hello World!", 100 );
-    memcpy(ether_frame + 12, "hello world!", 100);
+    memcpy(ether_frame, "hello world!", 100);
 
     // Report source MAC address to stdout.
     printf ("\tMAC address for interface %s is ", interface);
@@ -212,7 +213,7 @@ bool Socket::recvMsg(unsigned char *buf, size_t len) {
         handle_error("Socket::recvMsg()");
         return false;
     }
-    printf("\tGot Message:'%s'\n", buf);
+    printf("\tGot Message(%ld bytes):'%02x'\n", bytes, buf);
 
     /* ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
                         struct sockaddr *src_addr, socklen_t *addrlen); */
