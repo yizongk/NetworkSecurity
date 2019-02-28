@@ -87,7 +87,7 @@ bool Socket::bindSocket() {
 }
 
 /* Send messages to address specified in sockaddr_ll through the socket
- *
+ * Message must be of type bytes AKA uint8_t, else sendto() will set errno
  *  */
 bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     memset(buf,0,len);    // Blank out the array.
@@ -151,14 +151,14 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     memcpy (ether_frame + 6, src_mac, 6 * sizeof (uint8_t)); */
 
     //strncpy( (char*)ether_frame, "Hello World!", 100 );
-    memcpy(ether_frame, "hello world!", 100);
+    memcpy(ether_frame, "hello world!", 100 * sizeof (uint8_t));
 
     // Report source MAC address to stdout.
-    printf ("\tMAC address for interface %s is ", interface);
+    printf ("\tMAC address for interface '%s' is '", interface);
     for (int i=0; i<6; i++) {
         printf ("%02x:", src_mac[i]);
     }
-    printf("\n");
+    printf("'\n");
 
     // Setting up the sockadd_ll
     struct sockaddr_ll device;
@@ -197,26 +197,26 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     return true;
 }
 
-/* Receive messages from a socket
+/* Receive messages from a socket (In bytes AKA uint8_t)
  * If  a  message is  too long to fit in the supplied buffer, excess bytes may be discarded depending on the type of socket the message is received from.
  * If no messages are available at the socket, the receive calls wait for a message to arrive, unless the socket is nonblocking
  * */
 bool Socket::recvMsg(unsigned char *buf, size_t len) {
+    uint8_t *holder = new uint8_t[len];
+    memset(holder,0,len * sizeof(uint8_t));
     memset(buf,0,len);    // Blank out the array.
     ssize_t bytes = -1;   // The actualy len of contents recieved from socket.  
                                 // (>1) means the len of message. (==0) means len of msg is 0 or peer has performed an orderly shutdown. 
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
 
     
-    if( ( bytes = recvfrom(this->fd,buf,len,0,NULL,NULL) ) < 0 ) {
+    if( ( bytes = recvfrom(this->fd,holder,len*sizeof(uint8_t),0,NULL,NULL) ) < 0 ) {
         error_code = errno;
         handle_error("Socket::recvMsg()");
         return false;
     }
-    printf("\tGot Message(%ld bytes):'%02x'\n", bytes, buf);
-
-    /* ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
-                        struct sockaddr *src_addr, socklen_t *addrlen); */
+    printf("\tGot Message(%ld bytes):'%02x'\n", bytes, holder);
+    // do something about memset(buf, holder)       // NOT THE JOB OF SOCKET! That's the job of server, leave socket as a way to transfer RAW data, all of the RAW data. Server and client (or a seperate protocol class will parse it.)
 
     return true;
 }
