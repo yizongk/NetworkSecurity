@@ -224,13 +224,6 @@ bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes) {
     return true;
 }
 
-/* delete a name (the fd that was binded) and possibly the file it refers to 
- * in other word, unbinding it
- * */
-bool Socket::unlinkSocket() {
-
-}
-
 /* Release the resource associated with file descriptor of this socket */
 bool Socket::closeSocket() {
     if( close(this->fd) != 0 ) {
