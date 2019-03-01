@@ -181,7 +181,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
         handle_error("Socket::sendMsg()");
         return false;
     }
-    printf("\tbytes send:'%lu'\n\tether_frame:'%02x'\n\tframe_length:'%u'\n", bytes, ether_frame, frame_length);
+    printf("\tbytes send:'%lu' bytes\n\tether_frame:'%02x'\n\tframe_length:'%u' bytes\n", bytes, ether_frame, frame_length);
 
     // Clean up dynamically allocated resources
     delete ether_frame;

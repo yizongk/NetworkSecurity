@@ -15,8 +15,8 @@ test: $(OBJECTS)
 
 main.o: main.cpp
 	g++ -c main.cpp
-socket.o: ../../../src/socket.cpp
-	g++ -c ../../../src/socket.cpp
+socket.o: ../../../src/backend/socket.cpp
+	g++ -c ../../../src/backend/socket.cpp
 
 
 .PHONY: clean
