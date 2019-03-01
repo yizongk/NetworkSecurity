@@ -1,3 +1,11 @@
+# NetworkSecurity
+We are trying to write our own protocol and backend system to learn and protect against different network attacks, such as SQL-injection, DOS, Buffer Overflow, D-DOS and more.
+
+This requires us to create our own raw socket, and then writing up our own protocol.
+
+Here are more infomation about our project. 
+IS IT CURRENTLY WIP
+
 # Dependency
  * make
  * g++
