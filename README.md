@@ -10,6 +10,9 @@ IS IT CURRENTLY WIP
  * make
  * g++
 
+# Tools
+In tools/ you will find some quick src file that will help you find important information in order for program to run. The function of each file are self explanatory from the filename. I would suggest worrying about these file only when the problem comes up when you try to run our codes.
+
 # Testing
 
 cd to test/
