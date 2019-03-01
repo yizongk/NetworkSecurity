@@ -27,9 +27,14 @@
 /* Constructor */
 Socket::Socket() {
     this->fd = -1;
+    this->error_code = 0;
+    memset(&this->interface,0,INTERFACE_NAME_LEN);
+    memcpy(&this->interface,"lo",2);
+    // Set up address that is associated with this socket
     memset(&this->myaddr, 0, sizeof(this->myaddr)); //*memset(void *s, int c, size_t n)  -->  fills the first n bytes of the memory area pointed to by s with the constant byte c. Clears the structure
     this->myaddr.sll_family = AF_PACKET;            // Should always be AF_PACKET for RAW_SOCKET 
-    this->error_code = 0;
+    this->myaddr.sll_protocol = htons(ETH_P_ALL);   // Takes in all packets
+    this->myaddr.sll_ifindex = if_nametoindex(this->interface);   // 0 matches any interface, 1 is loopback device (not sure if it works), 2 is my local wlp59s0
 }
 
 
@@ -69,14 +74,9 @@ bool Socket::openSocket() {
  * for bind only sll_protocol and sll_ifindex are used (Taken from https://linux.die.net/man/7/packet)
  * sll_protocol, just pick a protocol from <linux/if_ether.h>
  * sll_ifindex refers to the physical or logical interface such as a network adapter or loopback device
+ * But our sockaddr_ll is already setted up in our constructor, so no need to worry about sll_protocol and sll_ifindex in this function
  * */
 bool Socket::bindSocket() {
-    //memset(&(this->myaddr), 0, sizeof(sockaddr_ll));    
-
-    this->myaddr.sll_family = AF_PACKET;
-    this->myaddr.sll_protocol = htons(ETH_P_ALL);
-    this->myaddr.sll_ifindex = if_nametoindex("wlp59s0");   // 0 matches any interface, 1 is loopback device (not sure if it works), 2 is my local wlp59s0
-
     if( bind( this->fd, (struct sockaddr *) &myaddr, sizeof(sockaddr_ll) ) == -1 ) {
         error_code = errno;
         handle_error("binding the socket");
@@ -89,10 +89,8 @@ bool Socket::bindSocket() {
 /* Send messages to address specified in sockaddr_ll through the socket
  * Message must be of type bytes AKA uint8_t, else sendto() will set errno
  *  */
-bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
-    memset(buf,0,len);    // Blank out the array.
-
-    ssize_t bytes = -1;   // The actualy len of contents recieved from socket.  
+bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags) {
+    ssize_t bytes = -1;   // The actualy len of contents sended out from the socket.  
                                 // (>1) means the len of message. (==0) means len of msg is 0 or peer has performed an orderly shutdown. 
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
     uint8_t *ether_frame, *src_mac, *dst_mac;
@@ -117,8 +115,8 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     dst_mac[4] = 0xc8;
     dst_mac[5] = 0x75; */
 
-    // Set the interface name: you need to fill these out
-    strcpy(interface, "wlp59s0");
+    // Set the destination interface name: you need to fill these out
+    strcpy(interface, this->interface);
 
     // Source IPv4 address: you need to fill this out
     strcpy (src_ip, "127.0.0.1");
@@ -151,7 +149,8 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     memcpy (ether_frame + 6, src_mac, 6 * sizeof (uint8_t)); */
 
     //strncpy( (char*)ether_frame, "Hello World!", 100 );
-    memcpy(ether_frame, "hello world!", 100 * sizeof (uint8_t));
+    //memcpy(ether_frame, "hello world!", 100 * sizeof (uint8_t));
+    memcpy(ether_frame, buf, len*sizeof(uint8_t));
 
     // Report source MAC address to stdout.
     printf ("\tMAC address for interface '%s' is '", interface);
@@ -160,25 +159,24 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
     }
     printf("'\n");
 
-    // Setting up the sockadd_ll
-    struct sockaddr_ll device;
-    memset(&device, 0, sizeof(struct sockaddr_ll));
+    // Setting up the destination sockadd_ll
+    struct sockaddr_ll dst_device;
+    memset(&dst_device, 0, sizeof(struct sockaddr_ll));
 
     // Find interface index from interface name and store index in
-    // struct sockaddr_ll device, which will be used as an argument of sendto().
-    if ((device.sll_ifindex = if_nametoindex (interface)) == 0) {
+    // struct sockaddr_ll dst_device, which will be used as an argument of sendto().
+    if ((dst_device.sll_ifindex = if_nametoindex (interface)) == 0) {
         handle_error("if_nametoindex() failed to obtain interface index ");
         return false;
     }
-    /* printf ("\tIndex for interface %s is %i\n", interface, device.sll_ifindex); */
-    device.sll_family = AF_PACKET;
-    device.sll_halen = ETH_ALEN;
-    device.sll_ifindex = if_nametoindex("wlp59s0");
-    device.sll_protocol = htons(ETH_P_ALL);
+    /* printf ("\tIndex for interface %s is %i\n", interface, dst_device.sll_ifindex); */
+    dst_device.sll_family = AF_PACKET;
+    dst_device.sll_halen = ETH_ALEN;
+    dst_device.sll_protocol = htons(ETH_P_ALL);
     
-    memcpy (device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
+    memcpy (dst_device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
 
-    if( ( bytes = sendto(this->fd,ether_frame,frame_length,0,(struct sockaddr *)&device,sizeof(struct sockaddr_ll)) ) < 0 ) {
+    if( ( bytes = sendto(this->fd,ether_frame,frame_length,0,(struct sockaddr *)&dst_device,sizeof(struct sockaddr_ll)) ) < 0 ) {
         error_code = errno;
         handle_error("Socket::sendMsg()");
         return false;
@@ -200,12 +198,15 @@ bool Socket::sendMsg(unsigned char *buf, size_t len, int flags) {
 /* Receive messages from a socket (In bytes AKA uint8_t)
  * If  a  message is  too long to fit in the supplied buffer, excess bytes may be discarded depending on the type of socket the message is received from.
  * If no messages are available at the socket, the receive calls wait for a message to arrive, unless the socket is nonblocking
+ * @buf: buffer    
+ * @len: len of allocated size for buf
+ * @bytes_in: the number of bytes recieved from socket
  * */
-bool Socket::recvMsg(unsigned char *buf, size_t len) {
+bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes) {
     uint8_t *holder = new uint8_t[len];
     memset(holder,0,len * sizeof(uint8_t));
     memset(buf,0,len);    // Blank out the array.
-    ssize_t bytes = -1;   // The actualy len of contents recieved from socket.  
+    //ssize_t bytes = -1;   // The actualy len of contents recieved from socket.  
                                 // (>1) means the len of message. (==0) means len of msg is 0 or peer has performed an orderly shutdown. 
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
 
@@ -215,7 +216,9 @@ bool Socket::recvMsg(unsigned char *buf, size_t len) {
         handle_error("Socket::recvMsg()");
         return false;
     }
-    printf("\tGot Message(%ld bytes):'%02x'\n", bytes, holder);
+    memcpy(buf,holder,len * sizeof(uint8_t));
+    //printf("\tGot Message(%ld bytes):'%s'\n", bytes, buf);
+    //printf("\tGot Message(%ld bytes):'%02x'\n", bytes, holder);
     // do something about memset(buf, holder)       // NOT THE JOB OF SOCKET! That's the job of server, leave socket as a way to transfer RAW data, all of the RAW data. Server and client (or a seperate protocol class will parse it.)
 
     return true;

@@ -6,22 +6,27 @@
 #include <linux/if_ether.h>
 #include <string.h>
 
+#define INTERFACE_NAME_LEN 20
+
+// Designed to be a RAW socket
 class Socket {
     private:
-        int fd;
-        sockaddr_ll myaddr;
-        int error_code;
+        int fd;                 // File descriptor for the socket
+        sockaddr_ll myaddr;     // The address information for this socket
+        int error_code;         // Error code produced by this class, will contain the same as errno produced by functions that is associated with this class
+        char interface[INTERFACE_NAME_LEN];     // The interface name that this socket interacts with, defaults is loopback which is 'lo'. For tool to find your interface, refer to tool/getAllIndexAndMac.cpp
 
     public:
         Socket();
+        //Socket(char*);
         ~Socket();
 
         bool isValid() const;
 
         bool openSocket();
         bool bindSocket();    /* Work on hold, need to test if raw port can already receive data. */
-        bool sendMsg(unsigned char *buf, size_t len, int flags);
-        bool recvMsg(unsigned char *buf, size_t len);
+        bool sendMsg(const unsigned char *buf, const size_t len, const int flags);
+        bool recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes_in);
         bool unlinkSocket();        /* Need work */
         bool closeSocket();
 

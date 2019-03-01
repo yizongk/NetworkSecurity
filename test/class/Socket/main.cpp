@@ -74,6 +74,8 @@ bool test_sendmsg_of_socket(Socket& dummy) {
 
     size_t buff_len = 100;
     unsigned char *buff = new unsigned char[buff_len];
+    memset(buff,0,buff_len);
+    memcpy( buff, "Hello World! YOU!", buff_len );
 
     if( dummy.sendMsg(buff,buff_len,0) == false ) {
         cout << "(X) " << endl;
@@ -94,14 +96,17 @@ bool test_sendmsg_of_socket(Socket& dummy) {
 bool test_recvmsg_of_socket(Socket& dummy) {
     cout << "test_recvmsg_of_socket()..." << endl;
 
+    ssize_t bytes = -1;
     size_t buff_len = 100;
     unsigned char *buff = new unsigned char[buff_len];
 
-    if( dummy.recvMsg(buff,buff_len) == false ) {
+    if( dummy.recvMsg(buff,buff_len,bytes) == false ) {
         cout << "(X) " << endl;
         cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
         return false;
     }
+
+    printf("\tGot Message(%ld bytes):'%s'\n", bytes, buff);
 
     delete[] buff;
     return true;
