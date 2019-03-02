@@ -214,7 +214,6 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
 
     return true;
 }
-//TO DO!!!!!!!!!!!!! make sure recvMsg have equal or greater len size than the called send fct, this might be buffer overflow, got to check.
 
 /* Receive messages from a socket (In bytes AKA uint8_t)
  * If  a  message is  too long to fit in the supplied buffer, excess bytes may be discarded depending on the type of socket the message is received from.
