@@ -24,7 +24,7 @@ class Socket {
         bool isValid() const;
 
         bool openSocket();
-        bool bindSocket();    /* Work on hold, need to test if raw port can already receive data. */
+        bool bindSocket();   
         bool sendMsg(const unsigned char *buf, const size_t len, const int flags);
         bool recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes_in);
         bool closeSocket();
