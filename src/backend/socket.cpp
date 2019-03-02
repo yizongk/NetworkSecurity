@@ -39,7 +39,8 @@ Socket::Socket() {
 
 /* Constructor 
  * @arg: name of the interface to bind the socket to, and the size of the interface name (The size should be <20)
-*/
+ * changes the default interface name to be used in bind().
+ */
 Socket::Socket(const char *itf_name) {
     if(strlen(itf_name) >= 20) {
         handle_error("interface name length argument to constructor equals or exceeds 20. Ignore Errno message, doesn't apply to this crash.");
@@ -112,7 +113,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
                                 // (>1) means the len of message. (==0) means len of msg is 0 or peer has performed an orderly shutdown. 
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
     uint8_t *ether_frame, *src_mac, *dst_mac;
-    int frame_length;
+    size_t frame_length;
     char *interface, *target, *dst_ip, *src_ip;
     struct ifreq ifr;
 
@@ -160,7 +161,8 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
 
     // Ethernet frame length = ethernet header (MAC + MAC + ethernet type) + ethernet data (IP header + TCP header)
     //frame_length = 6 + 6 + 2 + IP4_HDRLEN + TCP_HDRLEN;
-    frame_length = 100;
+    //frame_length = 100;
+    frame_length = len;
 
     // Destination and Source MAC addresses
     /* memcpy (ether_frame, dst_mac, 6 * sizeof (uint8_t));
@@ -199,7 +201,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
         handle_error("Socket::sendMsg()");
         return false;
     }
-    printf("\tbytes send:'%lu' bytes\n\tether_frame:'%02x'\n\tframe_length:'%u' bytes\n", bytes, ether_frame, frame_length);
+    printf("\tbytes send:'%lu' bytes\n\tether_frame:'%02x'\n\tframe_length:'%lu' bytes\n", bytes, ether_frame, frame_length);
 
     // Clean up dynamically allocated resources
     delete ether_frame;
@@ -212,6 +214,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
 
     return true;
 }
+//TO DO!!!!!!!!!!!!! make sure recvMsg have equal or greater len size than the called send fct, this might be buffer overflow, got to check.
 
 /* Receive messages from a socket (In bytes AKA uint8_t)
  * If  a  message is  too long to fit in the supplied buffer, excess bytes may be discarded depending on the type of socket the message is received from.
