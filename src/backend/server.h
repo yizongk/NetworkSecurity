@@ -4,21 +4,28 @@
 #include <string>
 #include "socket.h"
 
+#define BUFF_MAX_LEN 100
+
+/* Notes on server
+ * Current max buffer length for each transaction(listen or send) is 100 as defined by BUFF_MAX_LEN
+ */
 class Server {
     private:
         Socket          endpoint;
+        size_t          buffer_len;
         
     public:
-        /* Core setup fcts */
+        /* Core fcts */
         Server();
-        Server(int);
+        Server(const char *);
         ~Server();
-        bool connect_socket(int);
-        bool close_socket();
+        bool bootup();
+        bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
+        bool send(const unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
+        bool shutdown();
 
-        /* Feature fcts */
-        bool            send(std::string&);
-        std::string     fetch();
+        /* Interactions fcts that will implement our own protocol */
+        // fcts goes here
 };
 
 #endif

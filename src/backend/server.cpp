@@ -2,42 +2,47 @@
 #include "server.h"
 
 /* Default constructor
- * no port number binded to socket created in this instance with this construtor
- * if chosen to use this constructor, it will need to bind the socket to a port number for this instance in order to be useful 
  */
-Server::Server() {
-    
+Server::Server() : buffer_len(BUFF_MAX_LEN) {
+     
 }
 
-/* Construtor to bind the server instance's socket to a pre-specify port number 
- * @param portnumber: The port number that will be used to bind socket
+/*  Changes the default interface name that is used to bind the underlying socket
  */
-Server::Server(int portnum) {
+Server::Server(const char *interface) : endpoint(interface), buffer_len(BUFF_MAX_LEN) {
 
 }
 
-/* Binds a port number Server.socket in the server instance */
-bool Server::connect_socket(int portnum) {
-
-}
-
-/* Unbinds the Socket in this instance of Server */
-bool Server::close_socket() {
-    
-}
-
-/* Called when When a session has been completed
- * the Socket's file descriptor from Server.socket will be closed, no longer refers to that fd
+/* Ensure server is closed.
  */
-/* bool Server::close() {
-// This fct should be in Socket class
-} */
-
-/* Setter + Getter */
-bool Server::send(std::string& msg) {
-
+Server::~Server() {
+    this->shutdown();
 }
 
-std::string Server::fetch() {
-
+/* Opens, and bind the socket endpoint
+ */
+bool Server::bootup() {
+    return ( endpoint.openSocket() && endpoint.bindSocket() );
 }
+
+/* Listens for ONE incoming transmission. bytes is how much bytes was receieved.
+ */
+bool Server::listen(unsigned char *buff, ssize_t &bytes) {
+    return endpoint.recvMsg(buff, this->buffer_len, bytes);
+}
+
+/* Sends ONE outgoing transmission.
+ * TODO: need to specify where to send to
+ */
+bool Server::send(const unsigned char *buffer) {
+    return endpoint.sendMsg(buffer, this->buffer_len, 0);
+}
+
+
+/* Closes the socket, no more listening or sending...
+ */
+bool Server::shutdown() {
+    return endpoint.closeSocket();
+}
+
+// Add fcts here to 
