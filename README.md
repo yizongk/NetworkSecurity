@@ -6,6 +6,9 @@ This requires us to create our own raw socket, and then writing up our own proto
 Here are more infomation about our project. 
 IS IT CURRENTLY WIP
 
+# Envorinment
+This project is developed on Ubuntu 18.04.2 LTS bionic
+
 # Dependency
  * make
  * g++
