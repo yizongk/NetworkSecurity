@@ -18,7 +18,7 @@ class Socket {
 
     public:
         Socket();
-        //Socket(char*);
+        Socket(const char*);
         ~Socket();
 
         bool isValid() const;

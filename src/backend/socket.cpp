@@ -37,6 +37,24 @@ Socket::Socket() {
     this->myaddr.sll_ifindex = if_nametoindex(this->interface);   // 0 matches any interface, 1 is loopback device (not sure if it works), 2 is my local wlp59s0
 }
 
+/* Constructor 
+ * @arg: name of the interface to bind the socket to, and the size of the interface name (The size should be <20)
+*/
+Socket::Socket(const char *itf_name) {
+    if(strlen(itf_name) >= 20) {
+        handle_error("interface name length argument to constructor equals or exceeds 20. Ignore Errno message, doesn't apply to this crash.");
+    }
+
+    this->fd = -1;
+    this->error_code = 0;
+    memset(&this->interface,0,INTERFACE_NAME_LEN);
+    memcpy(&this->interface,itf_name, strlen(itf_name));
+    // Set up address that is associated with this socket
+    memset(&this->myaddr, 0, sizeof(this->myaddr)); //*memset(void *s, int c, size_t n)  -->  fills the first n bytes of the memory area pointed to by s with the constant byte c. Clears the structure
+    this->myaddr.sll_family = AF_PACKET;            // Should always be AF_PACKET for RAW_SOCKET 
+    this->myaddr.sll_protocol = htons(ETH_P_ALL);   // Takes in all packets
+    this->myaddr.sll_ifindex = if_nametoindex(this->interface);   // 0 matches any interface, 1 is loopback device (not sure if it works), 2 is my local wlp59s0
+}
 
 /* Destructor */
 Socket::~Socket() {
