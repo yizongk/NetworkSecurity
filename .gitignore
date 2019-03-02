@@ -1,3 +1,5 @@
 .vscode/
 **/*.o
-**/test
+tool/**/test*
+test/class/Socket/test_socket_main
+test/class/Server/test_server_main
