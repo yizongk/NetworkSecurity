@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     if( argc != 2 ) {
-        printf("Usage: sudo ./test_Client_main 'interface name(such as lo, wlp59s0)'\n");
+        printf("Usage: sudo ./test_client_main 'interface name(such as lo, wlp59s0)'\n");
         return 0;
     }
 
