@@ -9,12 +9,12 @@ EXE        := test_server_main
 all: $(EXE)
 
 
-test_socket_main: $(OBJECTS)
+test_server_main: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 	@ echo Changed files: $?
 
-main.o: test_socket_main.cpp
-	g++ -c test_socket_main.cpp
+test_server_main.o: test_server_main.cpp
+	g++ -c test_server_main.cpp
 socket.o: ../../../src/backend/socket.cpp
 	g++ -c ../../../src/backend/socket.cpp
 server.o: ../../../src/backend/server.cpp
