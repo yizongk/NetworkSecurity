@@ -8,6 +8,7 @@
 
 /* Notes on server
  * Current max buffer length for each transaction(listen or send) is 100 as defined by BUFF_MAX_LEN
+ * Current packets being sended from server to client is *assumes to be null terminated c-string*!!!
  */
 class Server {
     private:
