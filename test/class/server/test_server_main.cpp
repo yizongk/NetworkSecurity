@@ -7,6 +7,11 @@ using namespace std;
                                         //TODO: Need to fix output formating, and makefile!
 int main(int argc, char* argv[]) {
 
+    if( argc != 2 ) {
+        printf("Usage: sudo ./test_server_main 'interface name(such as lo, wlp59s0)'\n");
+        return 0;
+    }
+
     bool pass = true;
     /* testing normal constructor and its functions */
     Server dummy;
@@ -41,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     printf("-------------------------------------------------------------------\n");
     /* Testing constructor that takes in a interace name and its functions */
-    Server dummyItf("wlp59s0");
+    Server dummyItf(argv[1]);
     /* Reusing variable, but reset it first */
     memset(buf,0,BUFLEN);
     memcpy(buf,"Server test sending message: Second constructor NOW", 35);
