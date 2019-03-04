@@ -25,7 +25,7 @@ class Server {
         bool send(const unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
 
-        /* Interactions fcts that will implement our own protocol */
+        /* Interactions fcts that will implement our own protocol - SERVER SIDE */
         // fcts goes here
 };
 
