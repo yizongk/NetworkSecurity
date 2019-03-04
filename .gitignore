@@ -4,3 +4,4 @@ tool/**/test*
 test/class/socket/test_socket_main
 test/class/server/test_server_main
 test/class/client/test_client_main
+test/interaction/server_client_comm/test_server_client_comm_main
