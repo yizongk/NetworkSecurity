@@ -115,6 +115,12 @@ bool test_recvmsg_of_socket(Socket& dummy) {
 
 
 int main(int argc, char *argv[]) {
+
+    if( argc != 2 ) {
+        printf("Usage: sudo ./test_socket_main 'interface name(such as lo, wlp59s0)'\n");
+        return 0;
+    }
+
     bool pass = true;
     Socket dummy;               // do a test for interace argu
     
@@ -141,7 +147,7 @@ int main(int argc, char *argv[]) {
 
     printf("\n---------------------------------------\n");
     /* Testing the second constructor */
-    Socket dummy1("lo");
+    Socket dummy1(argv[1]);
 
     // Opening the socket
     if(!test_opening_of_socket(dummy1)) 
