@@ -99,14 +99,17 @@ bool test_recvmsg_of_socket(Socket& dummy) {
     ssize_t bytes = -1;
     size_t buff_len = 100;
     unsigned char *buff = new unsigned char[buff_len];
+    struct sockaddr src_addr;
+    int src_addr_len = sizeof(src_addr);
 
-    if( dummy.recvMsg(buff,buff_len,bytes) == false ) {
+    if( dummy.recvMsg(buff,buff_len,bytes,src_addr,src_addr_len) == false ) {
         cout << "(X) " << endl;
         cout << "\t" << "error(" << dummy.getErrorCode() << ") - " << dummy.getErrorStr() << endl;
         return false;
     }
 
     printf("\tGot Message(%ld bytes):'%s'\n", bytes, buff);
+    printf("\tGot some information about source sockaddr as well. But will not display here. Size of the incoming sockaddr is: '%ld'\n", src_addr_len);
 
     delete[] buff;
     return true;

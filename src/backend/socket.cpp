@@ -222,7 +222,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
  * @len: len of allocated size for buf
  * @bytes_in: the number of bytes recieved from socket
  * */
-bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes) {
+bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes, sockaddr &src_addr, int &src_addr_len) {
     uint8_t *holder = new uint8_t[len];
     memset(holder,0,len * sizeof(uint8_t));
     memset(buf,0,len);    // Blank out the array.
@@ -231,7 +231,8 @@ bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes) {
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
 
     
-    if( ( bytes = recvfrom(this->fd,holder,len*sizeof(uint8_t),0,NULL,NULL) ) < 0 ) {
+    // src_addr will now contain information about where src comes from.
+    if( ( bytes = recvfrom(this->fd,holder,len*sizeof(uint8_t),0,&src_addr,(socklen_t *)&src_addr_len) ) < 0 ) {
         error_code = errno;
         handle_error("Socket::recvMsg()");
         return false;

@@ -26,7 +26,7 @@ class Socket {
         bool openSocket();
         bool bindSocket();   
         bool sendMsg(const unsigned char *buf, const size_t len, const int flags);
-        bool recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes_in);
+        bool recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes_in, sockaddr &src_addr, int &src_addr_len);
         bool closeSocket();
 
 
