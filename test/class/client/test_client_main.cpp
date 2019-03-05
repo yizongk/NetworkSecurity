@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
         pass = false;
     } else {
         cout << "Received(" << bytes << " bytes):'" << incom_buf << "'" << endl;
+        cout << "\tPacket source addr size: '" << dummy.get_src_addr_len() << "'" << endl;
+        cout << "\tPacket sockaddr content: '" << dummy.get_string_src_addr() << "'" << endl;
     }
 
     if( !dummy.shutdown() ) {
@@ -67,6 +69,8 @@ int main(int argc, char* argv[]) {
         pass = false;
     } else {
         cout << "Received(" << bytes << " bytes):'" << incom_buf << "'" << endl;
+        cout << "\tPacket source addr size: '" << dummy.get_src_addr_len() << "'" << endl;
+        cout << "\tPacket sockaddr content: '" << dummy.get_string_src_addr() << "'" << endl;
     }
 
     if( !dummyItf.shutdown() ) {
