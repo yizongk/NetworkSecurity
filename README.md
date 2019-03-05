@@ -7,7 +7,8 @@ Here are more infomation about our project.
 
 As of right now, please use 'lo' as your interface for the socket (loopback device). Because to send things over real network, we need to set up the Ethernet header, IP header, UDP header and then the payload(your data). Due to the fact that we are on a time frame to test and fix certain network attacks, and limited actual hardware (server), we will not implement the headers for now. We will just implement the payload and uses a single machine feedig on the loopback device. This should not affect the effect of various network attacks, because we are still acting as a network, but just not wired to multiple machines. All logics are still the same for various network attacks to work.
 
-IS IT CURRENTLY WIP
+# How to use
+IS IT CURRENTLY WIP, no product yet.
 
 # Envorinment
 This project is developed on Ubuntu 18.04.2 LTS bionic
