@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "../../../src/backend/server.h"
 #include "../../../src/backend/client.h"
 
@@ -29,11 +30,24 @@ int main(int argc, char *argv[]) {
     dummyServer.bootup();
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
+    for(int i  = 0; i < 10; ++i) {
+        if( dummyServer.listen(incom_buf, bytes) ) {
+
+            /* printf("%d. Received(%zu):\n'",i,bytes);
+            for(int j=0;j<bytes;++j) {
+                printf("%02x ",incom_buf[j]);
+            }
+            printf("'\n"); */
+
+            cout << i << ". Received(" << bytes << " bytes):" << endl << "'";
+            for(int j = 0; j < bytes; ++j) {
+                cout << std::hex << (int)incom_buf[j];
+            }
+            cout << std::dec << "'" << endl;
+        }
+    }
     dummyServer.shutdown();
     dummyClient.shutdown();
-
-
-    dummyClient.listen(incom_buf,bytes);
 
     delete out_buf;
     delete incom_buf;
