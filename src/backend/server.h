@@ -14,6 +14,8 @@ class Server {
     private:
         Socket          endpoint;
         size_t          buffer_len;
+        struct sockaddr incom_src_addr;
+        int             incom_src_addr_len;
         
     public:
         /* Core fcts */
@@ -24,6 +26,10 @@ class Server {
         bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
         bool send(const unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
+
+        /* Feature fcts */
+        std::string get_string_src_addr();
+        int get_src_addr_len();
 
         /* Interactions fcts that will implement our own protocol - SERVER SIDE */
         // fcts goes here
