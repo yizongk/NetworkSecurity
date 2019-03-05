@@ -9,7 +9,7 @@ EXE        := test_server_client_comm_main
 all: $(EXE)
 
 
-test_server_client_main: $(OBJECTS)
+test_server_client_comm_main: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 	@ echo Changed files: $?
 
