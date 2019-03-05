@@ -173,7 +173,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
     memcpy(ether_frame, buf, len*sizeof(uint8_t));
 
     // Report source MAC address to stdout.
-    printf ("\tMAC address for interface '%s' is '", interface);
+    printf ("\tMAC address for src interface '%s' is '", interface);
     for (int i=0; i<6; i++) {
         printf ("%02x:", src_mac[i]);
     }
@@ -194,7 +194,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
     dst_device.sll_halen = ETH_ALEN;
     dst_device.sll_protocol = htons(ETH_P_ALL);
     
-    memcpy (dst_device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
+    memcpy (dst_device.sll_addr, dst_mac, ETH_ALEN * sizeof (uint8_t));
 
     if( ( bytes = sendto(this->fd,ether_frame,frame_length,0,(struct sockaddr *)&dst_device,sizeof(struct sockaddr_ll)) ) < 0 ) {
         error_code = errno;
