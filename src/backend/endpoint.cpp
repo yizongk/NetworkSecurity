@@ -36,6 +36,10 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes) {
  */
 bool Endpoint::send(unsigned char *buffer) {
     // some codes here that detect if buffer is larger than buffer_len, if so break down into packets
+    if( sizeof(buffer) > (this->max_buffer_len - sizeof(struct shinyarmor_hdr)) ) {
+        printf("Message too big...but still send");
+    }
+
     return endpoint.sendMsg(buffer, this->max_buffer_len, 0);
 }
 
@@ -48,8 +52,8 @@ bool Endpoint::shutdown() {
 
 /* Append shinyarmor protocl header to buf, called only by Endpoint::send()
  */
-bool Endpoint::append_hdr(unsigned char* buf) {
-
+bool Endpoint::build_packet(unsigned char* buf) {
+    return true;
 }
 
 // Add fcts here to 

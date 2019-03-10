@@ -24,7 +24,7 @@ class Endpoint {
         int             incom_src_addr_len;
         
         /* Feature fcts */
-        bool append_hdr(unsigned char*);
+        bool build_packet(unsigned char*);
 
     public:
         /* Core fcts */
