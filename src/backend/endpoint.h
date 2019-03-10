@@ -19,10 +19,13 @@
 class Endpoint {
     private:
         Socket          endpoint;
-        size_t          buffer_len;
+        size_t          max_buffer_len;
         struct sockaddr incom_src_addr;
         int             incom_src_addr_len;
         
+        /* Feature fcts */
+        bool append_hdr(unsigned char*);
+
     public:
         /* Core fcts */
         Endpoint();
@@ -33,8 +36,6 @@ class Endpoint {
         bool send(unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
 
-        /* Feature fcts */
-        bool append_hdr();
         
         /* Interactions fcts that will implement our own protocol */
         // fcts goes here
