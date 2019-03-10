@@ -147,6 +147,13 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
     memset (&ifr, 0, sizeof (ifr));
     memcpy (ifr.ifr_name, interface, sizeof (ifr.ifr_name));
     if (ioctl (this->fd, SIOCGIFHWADDR, &ifr) < 0) {
+        delete ether_frame;
+        delete src_mac;
+        delete dst_mac;
+        delete interface;
+        delete target;
+        delete src_ip;
+        delete dst_ip;
         handle_error("ioctl() failed to get source MAC address ");
         return false;
     }
@@ -186,6 +193,13 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
     // Find interface index from interface name and store index in
     // struct sockaddr_ll dst_device, which will be used as an argument of sendto().
     if ((dst_device.sll_ifindex = if_nametoindex (interface)) == 0) {
+        delete ether_frame;
+        delete src_mac;
+        delete dst_mac;
+        delete interface;
+        delete target;
+        delete src_ip;
+        delete dst_ip;
         handle_error("if_nametoindex() failed to obtain interface index ");
         return false;
     }
@@ -198,6 +212,13 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
 
     if( ( bytes = sendto(this->fd,ether_frame,frame_length,0,(struct sockaddr *)&dst_device,sizeof(struct sockaddr_ll)) ) < 0 ) {
         error_code = errno;
+        delete ether_frame;
+        delete src_mac;
+        delete dst_mac;
+        delete interface;
+        delete target;
+        delete src_ip;
+        delete dst_ip;
         handle_error("Socket::sendMsg()");
         return false;
     }
