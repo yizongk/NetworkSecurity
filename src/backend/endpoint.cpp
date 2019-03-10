@@ -33,7 +33,6 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes) {
 }
 
 /* Sends ONE outgoing transmission.
- * TODO: need to specify where to send to
  */
 bool Endpoint::send(unsigned char *buffer) {
     return endpoint.sendMsg(buffer, this->buffer_len, 0);
@@ -46,9 +45,9 @@ bool Endpoint::shutdown() {
     return endpoint.closeSocket();
 }
 
-/* append 
+/* Append shinyarmor protocl header to buf, called only by Endpoint::send()
  */
-bool append_hdr() {
+bool Endpoint::append_hdr(unsigned char* buf) {
 
 }
 
