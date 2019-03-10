@@ -5,18 +5,23 @@
  */
 Endpoint::Endpoint() : max_buffer_len(BUFF_MAX_LEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)) {
      memset(&incom_src_addr,0,sizeof(incom_src_addr));
+     this->buf = new unsigned char[this->max_buffer_len];
+     memset(this->buf, 0, this->max_buffer_len);
 }
 
 /*  Changes the default interface name that is used to bind the underlying socket
  */
 Endpoint::Endpoint(const char *interface) : endpoint(interface), max_buffer_len(BUFF_MAX_LEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)) {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
+    this->buf = new unsigned char[this->max_buffer_len];
+     memset(this->buf, 0, this->max_buffer_len);
 }
 
 /* Ensure Endpoint is closed.
  */
 Endpoint::~Endpoint() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
+    delete this->buf;
     this->shutdown();
 }
 

@@ -5,7 +5,7 @@
 #include "socket.h"
 #include "shinyarmor_hdr.h"
 
-#define BUFF_MAX_LEN 10
+#define BUFF_MAX_LEN 100
 
 /* Notes on Endpoint
  * 
@@ -20,6 +20,7 @@ class Endpoint {
     private:
         Socket          endpoint;
         size_t          max_buffer_len;
+        unsigned char   *buf;
         struct sockaddr incom_src_addr;
         int             incom_src_addr_len;
         
