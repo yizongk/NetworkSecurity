@@ -35,7 +35,7 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes) {
 /* Sends ONE outgoing transmission.
  * TODO: need to specify where to send to
  */
-bool Endpoint::send(const unsigned char *buffer) {
+bool Endpoint::send(unsigned char *buffer) {
     return endpoint.sendMsg(buffer, this->buffer_len, 0);
 }
 
@@ -46,5 +46,10 @@ bool Endpoint::shutdown() {
     return endpoint.closeSocket();
 }
 
+/* append 
+ */
+bool append_hdr() {
+
+}
 
 // Add fcts here to 

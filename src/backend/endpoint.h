@@ -30,10 +30,11 @@ class Endpoint {
         ~Endpoint();
         bool bootup();
         bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
-        bool send(const unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
+        bool send(unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
 
         /* Feature fcts */
+        bool append_hdr();
         
         /* Interactions fcts that will implement our own protocol */
         // fcts goes here
