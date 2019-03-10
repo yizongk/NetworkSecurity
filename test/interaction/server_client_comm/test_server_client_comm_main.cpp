@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "../../../src/backend/server.h"
-#include "../../../src/backend/client.h"
+#include "../../../src/backend/endpoint.h"
 
 #define BUFLEN 100
 
@@ -25,8 +24,8 @@ int main(int argc, char *argv[]) {
     unsigned char *incom_buf = new unsigned char[BUFLEN];
     memset(incom_buf,0,BUFLEN);
 
-    Server dummyServer(argv[1]);
-    Client dummyClient(argv[1]);
+    Endpoint dummyServer(argv[1]);
+    Endpoint dummyClient(argv[1]);
     dummyServer.bootup();
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "../../../src/backend/server.h"
-#include "../../../src/backend/client.h"
+#include "../../../src/backend/endpoint.h"
 
 #define BUFLEN 100
 
@@ -20,7 +19,7 @@ int main(int argc, char *argv[]) {
     unsigned char *out_buf = new unsigned char[BUFLEN];
     memset(out_buf,0,BUFLEN);
 
-    Client dummyClient(argv[1]);
+    Endpoint dummyClient(argv[1]);
     dummyClient.bootup();
 
     /* Allow client to send 10 messages to server */

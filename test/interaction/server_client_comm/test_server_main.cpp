@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "../../../src/backend/server.h"
-#include "../../../src/backend/client.h"
+#include "../../../src/backend/endpoint.h"
 
 #define BUFLEN 100
 
@@ -20,7 +19,7 @@ int main(int argc, char *argv[]) {
     unsigned char *incom_buf = new unsigned char[BUFLEN];
     memset(incom_buf,0,BUFLEN);
 
-    Server dummyServer(argv[1]);
+    Endpoint dummyServer(argv[1]);
     dummyServer.bootup();
 
     while(true) {
@@ -34,8 +33,8 @@ int main(int argc, char *argv[]) {
 
             cout << ". Received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
-                // cout << std::hex << (int)incom_buf[j];
-                cout << (char)incom_buf[j];
+                cout << std::hex << (int)incom_buf[j];
+                //cout << (char)incom_buf[j];
             }
             cout << std::dec << "'" << endl;
 
