@@ -41,4 +41,4 @@ clean:
 
 .PHONE: cleanall
 cleanall:
-	$(RM) $(OBJECTS) $(EXE)
+	$(RM) $(OBJECTS) $(EXE) $(CLI_OBJECTS) $(SER_OBJECTS)
