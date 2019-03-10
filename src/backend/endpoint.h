@@ -5,7 +5,7 @@
 #include "socket.h"
 #include "shinyarmor_hdr.h"
 
-#define BUFF_MAX_LEN 100
+#define BUFF_MAX_LEN 20     /* BUG: magic number is 14 here, anything len below 14 will cause errno of invalid argument to system call for some reason. */
 
 /* Notes on Endpoint
  * 
@@ -20,7 +20,7 @@ class Endpoint {
     private:
         Socket          endpoint;
         size_t          max_buffer_len;
-        unsigned char   *buf;
+        unsigned char   *buf_to_send;
         struct sockaddr incom_src_addr;
         int             incom_src_addr_len;
         
@@ -34,7 +34,7 @@ class Endpoint {
         ~Endpoint();
         bool bootup();
         bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
-        bool send(unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
+        bool send(unsigned char *, const size_t);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
 
         
