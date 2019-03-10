@@ -1,7 +1,7 @@
 INSTALLDIR := ./
 CC         := /usr/bin/g++
 CFLAGS     += -Wall
-OBJECTS    := test_client_main.o client.o socket.o
+OBJECTS    := test_client_main.o endpoint.o socket.o
 EXE        := test_client_main
 
 
@@ -17,8 +17,8 @@ test_client_main.o: test_client_main.cpp
 	g++ -c test_client_main.cpp
 socket.o: ../../../src/backend/socket.cpp
 	g++ -c ../../../src/backend/socket.cpp
-client.o: ../../../src/backend/client.cpp
-	g++ -c ../../../src/backend/client.cpp
+endpoint.o: ../../../src/backend/endpoint.cpp
+	g++ -c ../../../src/backend/endpoint.cpp
 
 
 .PHONY: clean

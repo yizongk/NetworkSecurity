@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../../../src/backend/server.h"
+#include "../../../src/backend/endpoint.h"
 
 #define BUFLEN 100
 
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     bool pass = true;
     /* testing normal constructor and its functions */
-    Server dummy;
+    Endpoint dummy;
 
     unsigned char *buf = new unsigned char[BUFLEN];
     memset(buf,0,BUFLEN);
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     printf("-------------------------------------------------------------------\n");
     /* Testing constructor that takes in a interace name and its functions */
-    Server dummyItf(argv[1]);
+    Endpoint dummyItf(argv[1]);
     /* Reusing variable, but reset it first */
     memset(buf,0,BUFLEN);
     memcpy(buf,"Server test sending message: Second constructor NOW", 35);
