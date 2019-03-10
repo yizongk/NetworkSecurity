@@ -46,21 +46,5 @@ bool Endpoint::shutdown() {
     return endpoint.closeSocket();
 }
 
-/* 
- * For the purpose of returning something of sockaddr that operator<< can process for std::cout
- * In this case, we return a string of formated text
- *  */
-std::string Endpoint::get_string_src_addr() {
-    std::string format_output;
-    format_output = "Feature Coming Soon!";                 /* TODO */
-    return format_output;
-}
-
-/* 
- * Returns the length of sockaddr len of the incoming packet
- *  */
-int Endpoint::get_src_addr_len() {
-    return this->incom_src_addr_len;
-}
 
 // Add fcts here to 

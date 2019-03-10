@@ -34,10 +34,8 @@ class Endpoint {
         bool shutdown();
 
         /* Feature fcts */
-        std::string get_string_src_addr();
-        int get_src_addr_len();
-
-        /* Interactions fcts that will implement our own protocol - ENDPOINT SIDE */
+        
+        /* Interactions fcts that will implement our own protocol */
         // fcts goes here
 };
 
