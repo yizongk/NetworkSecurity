@@ -3,11 +3,16 @@
 
 #include <string>
 #include "socket.h"
-#include "defense_hdr.h"
+#include "shinyarmor_hdr.h"
 
 #define BUFF_MAX_LEN 100
 
 /* Notes on Endpoint
+ * 
+ * This class is the level that we will be implemeenting our protocol. 
+ * PURPOSE: Input of this class: if it's a to-send-message. Will break one message down into more than one packets if needed, append header to each packet, and send it off.
+ *          Input of this class: if it's a received-message. Will collect one packet or multiple packets. Build the message, and return it by reference.
+ * 
  * Current max buffer length for each transaction(listen or send) is 100 as defined by BUFF_MAX_LEN
  * Current packets being sended from Endpoint to client and vice versa is *assumes to be null terminated c-string*!!!
  */
