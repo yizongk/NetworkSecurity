@@ -5,7 +5,7 @@
 #include "socket.h"
 #include "shinyarmor_hdr.h"
 
-#define BUFF_MAX_LEN 100
+#define BUFF_MAX_LEN 10
 
 /* Notes on Endpoint
  * 
