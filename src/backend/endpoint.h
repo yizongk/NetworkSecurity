@@ -1,16 +1,17 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef ENDPOINT_H
+#define ENDPOINT_H
 
 #include <string>
 #include "socket.h"
+#include "defense_hdr.h"
 
 #define BUFF_MAX_LEN 100
 
-/* Notes on Client
+/* Notes on Endpoint
  * Current max buffer length for each transaction(listen or send) is 100 as defined by BUFF_MAX_LEN
- * Current packets being sended from server to client and vice versa is *assumes to be null terminated c-string*!!!
+ * Current packets being sended from Endpoint to client and vice versa is *assumes to be null terminated c-string*!!!
  */
-class Client {
+class Endpoint {
     private:
         Socket          endpoint;
         size_t          buffer_len;
@@ -19,9 +20,9 @@ class Client {
         
     public:
         /* Core fcts */
-        Client();
-        Client(const char *);
-        ~Client();
+        Endpoint();
+        Endpoint(const char *);
+        ~Endpoint();
         bool bootup();
         bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
         bool send(const unsigned char *);           // fct returns after one transmission, TODO will need to specify where to send to
@@ -31,7 +32,7 @@ class Client {
         std::string get_string_src_addr();
         int get_src_addr_len();
 
-        /* Interactions fcts that will implement our own protocol - CLIENT SIDE */
+        /* Interactions fcts that will implement our own protocol - ENDPOINT SIDE */
         // fcts goes here
 };
 

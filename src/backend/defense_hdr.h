@@ -9,10 +9,8 @@
 #ifndef DEFENSE_HDR_H
 #define DEFENSE_HDR_H
 
-#define ID_LEN 10
-
 struct defense_hdr {
-    unsigned char id[ID_LEN]; 
+    bool eop = true;        // If true, this is the last packet of the entire transmission
 };
 
 #endif
