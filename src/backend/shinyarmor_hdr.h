@@ -10,7 +10,8 @@
 #define SHINYARMOR_HDR_H
 
 struct shinyarmor_hdr {
-    bool eop = true;        // If true, this is the last packet of the entire transmission
+    bool            eof;        // If true, this is the last packet of the entire transmission.
+    unsigned int    port_num;              // Specify the port number.
 };
 
 #endif

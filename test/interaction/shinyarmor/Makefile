@@ -3,6 +3,7 @@ CC         := /usr/bin/g++
 CFLAGS     += -Wall
 CLI_OBJECTS:= test_client_protocol_main.o endpoint.o socket.o
 SER_OBJECTS:= test_server_protocol_main.o endpoint.o socket.o
+OBJECTS	   := $(CLI_OBJECTS) $(SER_OBJECTS)
 EXE        := test_server_protocol_main test_client_protocol_main
 
 

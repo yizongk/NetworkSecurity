@@ -1,8 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../../../src/backend/endpoint.h"
-
-#define BUFLEN 100
+#include "../../../src/backend/constant.h"
 
 using namespace std;
 
@@ -23,7 +22,8 @@ int main(int argc, char *argv[]) {
     dummyServer.bootup();
 
     while(true) {
-        if( dummyServer.listen(incom_buf, bytes) ) {
+        memset(incom_buf,0,BUFLEN);
+        if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
             for(int j=0;j<bytes;++j) {

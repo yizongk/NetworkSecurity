@@ -4,8 +4,8 @@
 #include <string>
 #include "socket.h"
 #include "shinyarmor_hdr.h"
+#include "constant.h"
 
-#define BUFF_MAX_LEN 14     /* BUG: magic number is 14 here, anything len below 14 will cause errno of invalid argument to system call for some reason. */
 
 /* Notes on Endpoint
  * 
@@ -16,16 +16,19 @@
  * Current max buffer length for each transaction(listen or send) is 100 as defined by BUFF_MAX_LEN
  * Current packets being sended from Endpoint to client and vice versa is *assumes to be null terminated c-string*!!!
  */
-class Endpoint {
+class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARANTEE ONE MESSAGE FROM NEXT MSG WITH SPECIFIED PROT NUM
     private:
-        Socket          endpoint;
-        size_t          max_buffer_len;
-        unsigned char   *buf_to_send;
-        struct sockaddr incom_src_addr;
-        int             incom_src_addr_len;
+        Socket                  endpoint;
+        size_t                  max_buffer_len;
+        size_t                  max_msg_len;
+        unsigned char           *buf_to_send;
+        struct sockaddr         incom_src_addr;
+        int                     incom_src_addr_len;
         
         /* Feature fcts */
         bool build_packet(unsigned char*);
+        unsigned int get_packet_port_num(unsigned char*);
+        bool is_eof(unsigned char*);
 
     public:
         /* Core fcts */
@@ -33,8 +36,8 @@ class Endpoint {
         Endpoint(const char *);
         ~Endpoint();
         bool bootup();
-        bool listen(unsigned char *, ssize_t &);    // fct returns after one transmission
-        bool send(unsigned char *, const size_t);           // fct returns after one transmission, TODO will need to specify where to send to
+        bool listen(unsigned char *, ssize_t &, unsigned int);    // fct returns after one transmission in the correct port number sepcified in the header, it will be wrped in a while loop and return message of that psecific port
+        bool send(unsigned char *, const size_t, unsigned int);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
 
         
