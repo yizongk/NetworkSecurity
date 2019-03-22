@@ -14,14 +14,14 @@ int main(int argc, char *argv[]) {
     bool pass = true;
 
     /* For server to send/recieve off to */
-    unsigned char *out_buf = new unsigned char[BUFLEN];
-    memset(out_buf,0,BUFLEN);
+    unsigned char *out_buf = new unsigned char[MAX_MSG_LEN];
+    memset(out_buf,0,MAX_MSG_LEN);
     memcpy(out_buf,"Client test sending message: HAHAHA", 35);
 
     /* For client to send/recieve off to */
     ssize_t bytes = -1;
-    unsigned char *incom_buf = new unsigned char[BUFLEN];
-    memset(incom_buf,0,BUFLEN);
+    unsigned char *incom_buf = new unsigned char[MAX_MSG_LEN];
+    memset(incom_buf,0,MAX_MSG_LEN);
 
     Endpoint dummyServer(argv[1]);
     Endpoint dummyClient(argv[1]);
@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
     for(int i  = 0; i < 10; ++i) {
+        memset(incom_buf,0,BUFLEN);
         if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
