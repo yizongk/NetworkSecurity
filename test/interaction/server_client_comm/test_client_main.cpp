@@ -1,8 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../../../src/backend/endpoint.h"
-
-#define BUFLEN 100
+#include "../../../src/backend/constant.h"
 
 using namespace std;
 
@@ -35,7 +34,7 @@ int main(int argc, char *argv[]) {
 
         memset(out_buf,0,BUFLEN);
         memcpy(out_buf,temp.c_str(),temp.size());
-        dummyClient.send(out_buf, temp.size());
+        dummyClient.send(out_buf, temp.size(), PORT_NUM);
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();

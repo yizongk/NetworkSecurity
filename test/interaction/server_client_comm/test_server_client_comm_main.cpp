@@ -1,8 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../../../src/backend/endpoint.h"
-
-#define BUFLEN 100
+#include "../../../src/backend/constant.h"
 
 using namespace std;
 
@@ -30,7 +29,7 @@ int main(int argc, char *argv[]) {
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
     for(int i  = 0; i < 10; ++i) {
-        if( dummyServer.listen(incom_buf, bytes) ) {
+        if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
             for(int j=0;j<bytes;++j) {

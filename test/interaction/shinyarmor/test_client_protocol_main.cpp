@@ -1,14 +1,13 @@
 #include <iostream>
 #include <iomanip>
 #include "../../../src/backend/endpoint.h"
-
-#define BUFLEN 10
+#include "../../../src/backend/constant.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
     if( argc != 2 ) {
-        printf("Usage: sudo ./test_client_main 'interface name(such as lo, wlp59s0)'\n");
+        printf("Usage: sudo ./test_client_protocol_main 'interface name(such as lo, wlp59s0)'\n");
         return 0;
     }
 
@@ -16,26 +15,30 @@ int main(int argc, char *argv[]) {
 
     /* For client to send/recieve off to */
     ssize_t bytes = -1;
-    unsigned char *out_buf = new unsigned char[BUFLEN];
-    memset(out_buf,0,BUFLEN);
+    unsigned char *out_buf = new unsigned char[MAX_MSG_LEN];
+    memset(out_buf,0,MAX_MSG_LEN);
 
     Endpoint dummyClient(argv[1]);
     dummyClient.bootup();
 
-    /* Allow client to send 10 messages to server */
-    for(int i  = 0; i < 10; ++i) {
+    while(true) {
         string temp = "";
-        cout << "Enter a message(less than 10 characters):" << endl;
+        cout << "Enter a message(less than 10 characters) the 10 char dones't apply just yet:" << endl;
         getline(cin, temp);
-        if(temp.size() >= 100) {
-            cout << "message too long(less than 10 characters)." << endl;
+        if(temp.size() >= 10) {     //should amek sure the tmep.size() is converted to number of bytes small than MAX_MSG_LEN
+            cout << "message too long(less than 10 characters) the 10 char dones't apply just yet." << endl;
             cout << "-------------------------------------\n" << endl;
             continue;
         }
 
-        memset(out_buf,0,BUFLEN);
+        memset(out_buf,0,MAX_MSG_LEN);
         memcpy(out_buf,temp.c_str(),temp.size());
-        dummyClient.send(out_buf);
+        cout << "DEBUG: Buf:'";
+        for( int i = 0; i < MAX_MSG_LEN; ++i ) {
+            cout << std::hex << (int)out_buf[i];
+        }
+        cout << std::dec << "' (passing into)" << endl;
+        dummyClient.send(out_buf, temp.size(), PORT_NUM);
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();
