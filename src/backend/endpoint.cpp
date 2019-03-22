@@ -56,7 +56,7 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes, unsigned int port_num
         }
     }
 
-    memcpy(buff + sizeof(hdr), reciever, this->max_msg_len);
+    memcpy(buff, reciever + sizeof(hdr), this->max_msg_len);
 
     delete[] reciever;
     return hdr.eof;
@@ -99,7 +99,7 @@ bool Endpoint::shutdown() {
  */
 bool Endpoint::build_packet(unsigned char* buf) {
     printf("DEBUG: In building_packet()\n");
-    printf("\tDEBUG: total_msg_len = %zu. Glboal buflen = %d\n", this->max_buffer_len, BUFLEN);
+    printf("\tDEBUG: total_msg_len = %zu. Glboal buflen = %zu\n", this->max_buffer_len, BUFLEN);
 
     printf("\tDEBUG: Buf:");
     for( int i = 0; i < this->max_msg_len; ++i ) {
