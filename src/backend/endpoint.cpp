@@ -34,6 +34,8 @@ bool Endpoint::bootup() {
 /* Listens for ONE incoming transmission. bytes is how much bytes was receieved.
  */
 bool Endpoint::listen(unsigned char *buff, ssize_t &bytes) {
+    
+
     return endpoint.recvMsg(buff, this->max_buffer_len, bytes, this->incom_src_addr, this->incom_src_addr_len);
 }
 
@@ -41,9 +43,9 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes) {
  */
 bool Endpoint::send(unsigned char *buffer, const size_t buf_size) {
     // some codes here that detect if buffer is larger than buffer_len, if so break down into packets
-    if( buf_size > (this->max_buffer_len - sizeof(struct shinyarmor_hdr)) ) {
-        printf("Message too big...abort!");
-        return false;
+    if( buf_size > (this->max_buffer_len) ) {/* - sizeof(struct shinyarmor_hdr) */ //-> need to convert to how much it would take in bytes) ) {
+        printf("Message too big...abort!\n");
+        return false; 
     }
 
     // If the message is small enough to send in one go.

@@ -5,7 +5,7 @@
 #include "socket.h"
 #include "shinyarmor_hdr.h"
 
-#define BUFF_MAX_LEN 20     /* BUG: magic number is 14 here, anything len below 14 will cause errno of invalid argument to system call for some reason. */
+#define BUFF_MAX_LEN 14     /* BUG: magic number is 14 here, anything len below 14 will cause errno of invalid argument to system call for some reason. */
 
 /* Notes on Endpoint
  * 

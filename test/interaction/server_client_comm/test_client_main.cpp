@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
         memset(out_buf,0,BUFLEN);
         memcpy(out_buf,temp.c_str(),temp.size());
-        dummyClient.send(out_buf);
+        dummyClient.send(out_buf, temp.size());
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();
