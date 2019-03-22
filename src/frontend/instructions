@@ -1,0 +1,10 @@
+INSTRUCTIONS:
+Download Xampp, press start
+Go to volumes, mount
+Since you have a mac go on finder and you'll see an IP address under Locations
+Go to the htdocs directory
+Go to root dir (If theres no root dir make one)
+Put the login.php in the root dir
+Type your ip address/phpmyadmin and import the sql file (database)
+Manually add in a username/password into the db using phpmyadmin
+Login by going to your ipaddress/root/login.php
