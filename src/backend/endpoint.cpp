@@ -161,14 +161,63 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
 
 // Add fcts here to 
 
-void Endpoint::run_protocol_send(){
+void Endpoint::run_protocol_send(Endpoint &dummyRcv,unsigned char *buff, ssize_t &bytes, unsigned int port_number){
       
-     
+     string temp = "";
+     cout << "Enter a message(less than 100 characters):" << endl;
+     getline(cin, temp);
+     if(temp.size() >= 100) {
+        cout << "message too long(less than 100 characters)." << endl;
+        cout << "-------------------------------------\n" << endl;
+        continue;
+     }
+
+     memset(out_buf,0,MAX_MSG_LEN);
+     memcpy(out_buf,temp.c_str(),temp.size());
+     dummyClient.send(out_buf, temp.size(), PORT_NUM);
+     cout << "-------------------------------------\n" << endl;
 
 }
 
-void Endpoint::run_protocol_rcv(){
+void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *buff, ssize_t &bytes, unsigned int port_number ){
       
-     
+     while(true) {
+        memset(incom_buf,0,BUFLEN);
+        printf("\nListining...\n");
+        if( dummyRcv.listen(incom_buf, bytes, port_number) ) {
+            
+            printf("\nAcknowledged Request...\n");
+            //printf("%d. Received(%zu):\n'",i,bytes);
+
+            unsigned char aBuffer = "Acknowledged Request...";
+
+            send(aBuffer, strlen(aBuffer), port_number)
+            for(int j=0;j<bytes;++j) {
+                printf("%02x ",incom_buf[j]);
+            }
+            printf("'\n"); */
+
+            cout << ". Received(" << bytes << " bytes):" << endl << "'";
+            for(int j = 0; j < bytes; ++j) {
+                cout << std::hex << (int)incom_buf[j];
+                //cout << (char)incom_buf[j];
+            }
+            cout << std::dec << "'" << endl;
+
+            // MAC address for interface 'lo' is: '00:00:00:00:00:00:'
+            // MAC address for interface 'wlp59s0' is: '9c:b6:d0:ff:c8:75:  NOTE: This only applies to my own device(yi zong). Check out tool/getAllIndexAndMac.cpp to get your own Mac address'
+
+            /* Extracting the Ethernet header as defined in linux/if_ether.h */
+            /* struct ethhdr *eth = (struct ethhdr *)(incom_buf);
+            printf("\nEthernet Header (The physical address, or in other word MAC address)\n");
+            printf("\t|-Source Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
+            printf("\t|-Destination Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
+            printf("\t|-Protocol : %d\n",eth->h_proto); */
+
+            printf("---------------------------------------------\n");
+
+
+        }
+    }
 
 }
