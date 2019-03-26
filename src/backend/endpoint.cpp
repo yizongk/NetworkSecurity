@@ -160,3 +160,15 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
 }
 
 // Add fcts here to 
+
+void Endpoint::run_protocol_send(){
+      
+     
+
+}
+
+void Endpoint::run_protocol_rcv(){
+      
+     
+
+}
