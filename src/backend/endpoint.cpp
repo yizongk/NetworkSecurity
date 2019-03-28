@@ -1,6 +1,9 @@
 #include <string>
+#include <iostream>
+#include <iomanip>
 #include "endpoint.h"
 
+using namespace std;
 /* Default constructor
  */
 Endpoint::Endpoint() : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)) {
@@ -161,60 +164,64 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
 
 // Add fcts here to 
 
-void Endpoint::run_protocol_send(Endpoint &dummyRcv, unsigned char *buff, const size_t buf_size, ssize_t &bytes, unsigned int port_number){
+void Endpoint::run_protocol_send(unsigned char *buff, unsigned int port_number){
       
-     string temp = "";
+   std::string temp = "";
+   ssize_t bytes = -1;
+   unsigned char *incom_buf = new unsigned char[BUFLEN];
+   memset(incom_buf,0,BUFLEN);
+   cout << "Enter a message(less than 100 characters):" << endl;
+   getline(cin, temp);
+   if(temp.size() >= 100) {
+       std::cout << "message too long(less than 100 characters)." << endl;
+       std::cout << "-------------------------------------\n" << endl;
+       //continue;
+       return;
+   }
 
-     unsigned char *incom_buf = new unsigned char[BUFLEN];
-     cout << "Enter a message(less than 100 characters):" << endl;
-     getline(cin, temp);
-     if(temp.size() >= 100) {
-        cout << "message too long(less than 100 characters)." << endl;
-        cout << "-------------------------------------\n" << endl;
-        continue;
-     }
-
-     memset(buff,0,MAX_MSG_LEN);
-     memcpy(buff,temp.c_str(),temp.size());
-     dummyClient.send(out_buf, temp.size(), PORT_NUM); //first
-     memset(out_buf,0,MAX_MSG_LEN);
+   memset(buff,0,MAX_MSG_LEN);
+   memcpy(buff,temp.c_str(),temp.size());
+   this->send(buff, temp.size(), PORT_NUM); //first
+   memset(buff,0,MAX_MSG_LEN);
      
-     cout << "-------------------------------------\n" << endl;
+   std::cout << "-------------------------------------\n" << endl;
 
-     dummyClient.listen(incom_buf, bytes, port_number) //first
+   this->listen(incom_buf, bytes, port_number); //first
 
 }
 
-void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number ){
+void Endpoint::run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number ){
       
      while(true) {
         memset(incom_buf,0,BUFLEN);
         printf("\nListening...\n");
         cout<<"Server running...waiting for connection."<<endl;
-        if( dummyRcv.listen(incom_buf, bytes, port_number) ) { //first 
+        if( this->listen(incom_buf, bytes, port_number) ) { //first 
             
             
             printf("\nRequest Received...\n");
             //printf("%d. Received(%zu):\n'",i,bytes);
-
-            unsigned char aBuffer = "Acknowledged Request...";
-
-            send(aBuffer, strlen(aBuffer), port_number) //first
-            for(int j=0;j<bytes;++j) {
+            std::string temp = "Acknowledged Request...";
+            unsigned char *aBuffer = new unsigned char[BUFLEN];
+            
+            memset(aBuffer,0,BUFLEN);
+            memcpy(aBuffer,temp.c_str(),temp.size());
+            send(aBuffer, temp.size(), port_number); //first
+            for(int j=0; j < bytes ;++j) {
                 printf("%02x ",incom_buf[j]);
             }
             
             
             
-            aBuffer = "Acknowledged Request..."
-            printf("'\n"); */
+            //aBuffer = "Acknowledged Request...";
+            printf("'\n"); 
 
-            cout << ". Received(" << bytes << " bytes):" << endl << "'";
+            std::cout << ". Received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
                 //cout << (char)incom_buf[j];
             }
-            cout << std::dec << "'" << endl;
+            std::cout << std::dec << "'" << endl;
 
             // MAC address for interface 'lo' is: '00:00:00:00:00:00:'
             // MAC address for interface 'wlp59s0' is: '9c:b6:d0:ff:c8:75:  NOTE: This only applies to my own device(yi zong). Check out tool/getAllIndexAndMac.cpp to get your own Mac address'
