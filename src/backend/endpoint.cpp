@@ -173,21 +173,26 @@ void Endpoint::run_protocol_send(Endpoint &dummyRcv,unsigned char *buff, ssize_t
         continue;
      }
 
-     memset(out_buf,0,MAX_MSG_LEN);
-     memcpy(out_buf,temp.c_str(),temp.size());
+     memset(buff,0,MAX_MSG_LEN);
+     memcpy(buff,temp.c_str(),temp.size());
      dummyClient.send(out_buf, temp.size(), PORT_NUM);
+     memset(out_buf,0,MAX_MSG_LEN);
+     dummyClient.listen(
      cout << "-------------------------------------\n" << endl;
+
+     dummyRcv.listen(incom_buf, bytes, port_number)
 
 }
 
-void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *buff, ssize_t &bytes, unsigned int port_number ){
+void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number ){
       
      while(true) {
         memset(incom_buf,0,BUFLEN);
         printf("\nListining...\n");
         if( dummyRcv.listen(incom_buf, bytes, port_number) ) {
             
-            printf("\nAcknowledged Request...\n");
+            cout<<"Server running...waiting for connections."<<endl;
+            printf("\nRequest Received...\n");
             //printf("%d. Received(%zu):\n'",i,bytes);
 
             unsigned char aBuffer = "Acknowledged Request...";
@@ -196,6 +201,7 @@ void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *buff, ssize_t 
             for(int j=0;j<bytes;++j) {
                 printf("%02x ",incom_buf[j]);
             }
+            aBuffer = "Acknowledged Request..."
             printf("'\n"); */
 
             cout << ". Received(" << bytes << " bytes):" << endl << "'";
