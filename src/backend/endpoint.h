@@ -39,10 +39,18 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         bool listen(unsigned char *, ssize_t &, unsigned int);    // fct returns after one transmission in the correct port number sepcified in the header, it will be wrped in a while loop and return message of that psecific port
         bool send(unsigned char *, const size_t, unsigned int);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
-
+        
         
         /* Interactions fcts that will implement our own protocol */
         // fcts goes here
+
+        void run_protocol_rcv(Endpoint &dummyRcv,unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number);
+
+        void run_protocol_send(Endpoint &dummyRcv, unsigned char *buff, const size_t buf_size, ssize_t &bytes, unsigned int port_number); 
+
+
 };
+               
+
 
 #endif

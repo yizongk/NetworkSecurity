@@ -161,9 +161,11 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
 
 // Add fcts here to 
 
-void Endpoint::run_protocol_send(Endpoint &dummyRcv,unsigned char *buff, ssize_t &bytes, unsigned int port_number){
+void Endpoint::run_protocol_send(Endpoint &dummyRcv, unsigned char *buff, const size_t buf_size, ssize_t &bytes, unsigned int port_number){
       
      string temp = "";
+
+     unsigned char *incom_buf = new unsigned char[BUFLEN];
      cout << "Enter a message(less than 100 characters):" << endl;
      getline(cin, temp);
      if(temp.size() >= 100) {
@@ -174,12 +176,12 @@ void Endpoint::run_protocol_send(Endpoint &dummyRcv,unsigned char *buff, ssize_t
 
      memset(buff,0,MAX_MSG_LEN);
      memcpy(buff,temp.c_str(),temp.size());
-     dummyClient.send(out_buf, temp.size(), PORT_NUM);
+     dummyClient.send(out_buf, temp.size(), PORT_NUM); //first
      memset(out_buf,0,MAX_MSG_LEN);
-     dummyClient.listen(
+     
      cout << "-------------------------------------\n" << endl;
 
-     dummyRcv.listen(incom_buf, bytes, port_number)
+     dummyClient.listen(incom_buf, bytes, port_number) //first
 
 }
 
@@ -187,19 +189,23 @@ void Endpoint::run_protocol_rcv(Endpoint &dummyRcv,unsigned char *incom_buf, ssi
       
      while(true) {
         memset(incom_buf,0,BUFLEN);
-        printf("\nListining...\n");
-        if( dummyRcv.listen(incom_buf, bytes, port_number) ) {
+        printf("\nListening...\n");
+        cout<<"Server running...waiting for connection."<<endl;
+        if( dummyRcv.listen(incom_buf, bytes, port_number) ) { //first 
             
-            cout<<"Server running...waiting for connections."<<endl;
+            
             printf("\nRequest Received...\n");
             //printf("%d. Received(%zu):\n'",i,bytes);
 
             unsigned char aBuffer = "Acknowledged Request...";
 
-            send(aBuffer, strlen(aBuffer), port_number)
+            send(aBuffer, strlen(aBuffer), port_number) //first
             for(int j=0;j<bytes;++j) {
                 printf("%02x ",incom_buf[j]);
             }
+            
+            
+            
             aBuffer = "Acknowledged Request..."
             printf("'\n"); */
 

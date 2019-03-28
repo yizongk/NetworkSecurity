@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
     Endpoint dummyServer(argv[1]);
     dummyServer.bootup();
 
+/*
     while(true) {
         memset(incom_buf,0,BUFLEN);
         if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
                 printf("%02x ",incom_buf[j]);
             }
             printf("'\n"); */
-
+/*
             cout << ". Received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
@@ -47,12 +48,15 @@ int main(int argc, char *argv[]) {
             printf("\t|-Source Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
             printf("\t|-Destination Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
             printf("\t|-Protocol : %d\n",eth->h_proto); */
-
+/*
             printf("---------------------------------------------\n");
 
 
         }
     }
+*/
+*/
+
     dummyServer.shutdown();
 
     delete incom_buf;
