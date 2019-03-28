@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
     Endpoint dummyServer(argv[1]);
     dummyServer.bootup();
 
+    dummyServer.run_protocol_rcv(incom_buf, bytes, PORT_NUM);
+
 /*
     while(true) {
         memset(incom_buf,0,BUFLEN);
@@ -54,8 +56,8 @@ int main(int argc, char *argv[]) {
 
         }
     }
-*/
-*/
+*///
+//*/
 
     dummyServer.shutdown();
 
