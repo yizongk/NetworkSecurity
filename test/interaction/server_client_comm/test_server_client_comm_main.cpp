@@ -29,10 +29,11 @@ int main(int argc, char *argv[]) {
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
     for(int i  = 0; i < 1; ++i) {
-        dummyClient.send(out_buf, MAX_MSG_LEN, PORT_NUM);
 
-        memset(incom_buf,0,BUFLEN);
-        bytes = -1;
+        if( !dummyClient.send(out_buf, MAX_MSG_LEN, PORT_NUM) )
+            pass = false;
+
+        memset(incom_buf,0,MAX_MSG_LEN);
         if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
@@ -59,6 +60,12 @@ int main(int argc, char *argv[]) {
 
     delete[] out_buf;
     delete[] incom_buf;
+
+    if( pass ) 
+        cout << "\n---\n" << "all tests passed" << endl;
+    else 
+        cout << "\n---\n" << "some tests or all tests failed" << endl;
+
 
     return 0;
 }
