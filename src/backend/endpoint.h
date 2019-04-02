@@ -26,7 +26,7 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         int                     incom_src_addr_len;
         
         /* Feature fcts */
-        bool build_packet(unsigned char*);
+        bool build_packet(unsigned char*, unsigned int);
         unsigned int get_packet_port_num(unsigned char*);
         bool is_eof(unsigned char*);
 

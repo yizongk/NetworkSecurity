@@ -44,26 +44,27 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes, unsigned int port_num
     
     // SOMEHOW STIRP OFF THE HEADER HERE
     unsigned char *reciever = new unsigned char[this->max_buffer_len];
-    struct shinyarmor_hdr hdr;
+    struct shinyarmor_hdr income_hdr;
 
     while(true) {   // while it's not our port number
         memset(reciever,0,this->max_buffer_len);
         endpoint.recvMsg(reciever, this->max_buffer_len, bytes, this->incom_src_addr, this->incom_src_addr_len);
-        memcpy(&hdr,reciever,sizeof(hdr));
+        memcpy(&income_hdr,reciever,sizeof(income_hdr));
 
-        if(hdr.port_num == PORT_NUM) {
+        if(income_hdr.port_num == port_number) {
             break;
         }
     }
 
-    memcpy(buff, reciever + sizeof(hdr), this->max_msg_len);
+    memcpy(buff, reciever + sizeof(income_hdr), this->max_msg_len);
 
     delete[] reciever;
-    return hdr.eof;
+    return income_hdr.eof;
 }
 
 /* Sends ONE COMPLETE outgoing transmission (Our entire protocol is ran through once).
  * @argc port_number is use in the header defined in shinyarmor_hdr.h
+ * @argc buf_size is only the maxium size of the payload. It does not define the maximun size of packet that is going out of this endpoint.
  */
 bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int port_number) {
     printf("DEBUG: in send()\n");
@@ -73,7 +74,7 @@ bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int p
         return false; 
     }
 
-    this->build_packet(buffer);
+    this->build_packet(buffer, port_number);
     
     // If the message is small enough to send in one go.
     /* memcpy(this->buf_to_send, buffer, this->max_buffer_len); */
@@ -97,7 +98,7 @@ bool Endpoint::shutdown() {
  * @argc buf is the message
  * builds the packet and store it in Endpoint::buf_to_send
  */
-bool Endpoint::build_packet(unsigned char* buf) {
+bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
     printf("DEBUG: In building_packet()\n");
     printf("\tDEBUG: total_msg_len = %zu. Glboal buflen = %zu\n", this->max_buffer_len, BUFLEN);
 
@@ -115,7 +116,7 @@ bool Endpoint::build_packet(unsigned char* buf) {
 
     struct shinyarmor_hdr hdr;
     hdr.eof = true;
-    hdr.port_num = PORT_NUM;
+    hdr.port_num = port_number;
 
     memcpy(this->buf_to_send,&hdr,sizeof(hdr));
     printf("\tDEBUG: hdr(len: '%zu'):", sizeof(hdr));
