@@ -28,8 +28,11 @@ int main(int argc, char *argv[]) {
     dummyServer.bootup();
     dummyClient.bootup();
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
-    for(int i  = 0; i < 10; ++i) {
+    for(int i  = 0; i < 1; ++i) {
+        dummyClient.send(out_buf, MAX_MSG_LEN, PORT_NUM);
+
         memset(incom_buf,0,BUFLEN);
+        bytes = -1;
         if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
@@ -54,8 +57,8 @@ int main(int argc, char *argv[]) {
     dummyServer.shutdown();
     dummyClient.shutdown();
 
-    delete out_buf;
-    delete incom_buf;
+    delete[] out_buf;
+    delete[] incom_buf;
 
     return 0;
 }

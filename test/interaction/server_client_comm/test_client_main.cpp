@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     }
     dummyClient.shutdown();
 
-    delete out_buf;
+    delete[] out_buf;
 
     return 0;
 }

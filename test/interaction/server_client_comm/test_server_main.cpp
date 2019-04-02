@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     }
     dummyServer.shutdown();
 
-    delete incom_buf;
+    delete[] incom_buf;
 
     return 0;
 }

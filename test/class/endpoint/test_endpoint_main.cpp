@@ -41,8 +41,8 @@ bool test_zero_arg_constructor() {
         pass = false;
     }
 
-    delete buf;
-    delete incom_buf;
+    delete[] buf;
+    delete[] incom_buf;
 
 
     return true;
@@ -89,8 +89,8 @@ bool test_cml_arg_constructor(char* argv[]) {
     }
 
 
-    delete buf;
-    delete incom_buf;
+    delete[] buf;
+    delete[] incom_buf;
 
 
     return pass;
