@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     /* Allow client to send 10 messages to server */
     for(int i  = 0; i < 10; ++i) {
         
-        dummyClient.run_protocol_send(out_buf, PORT_NUM);
+        dummyClient.run_protocol_send(out_buf, PORT_NUM2, PORT_NUM);
 /*
         string temp = "";
         cout << "Enter a message(less than 100 characters):" << endl;

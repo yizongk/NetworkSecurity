@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     dummyServer.bootup();
     
     while(true){
-        dummyServer.run_protocol_rcv(incom_buf, bytes, PORT_NUM);
+        dummyServer.run_protocol_rcv(incom_buf, bytes, PORT_NUM, PORT_NUM2);
     }
 /*
     while(true) {

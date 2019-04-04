@@ -44,9 +44,9 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         /* Interactions fcts that will implement our own protocol */
         // fcts goes here
 
-        void run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number);
+        void run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsigned int lst_port_number, unsigned int snd_port_number);
 
-        void run_protocol_send(unsigned char *buff, unsigned int port_number); 
+        void run_protocol_send(unsigned char *buff, unsigned int lst_port_number, unsigned int snd_port_number); 
 
 
 };

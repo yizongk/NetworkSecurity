@@ -165,39 +165,55 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
 
 // Add fcts here to 
 
-void Endpoint::run_protocol_send(unsigned char *buff, unsigned int port_number){
+void Endpoint::run_protocol_send(unsigned char *buff, unsigned int lst_port_number, unsigned int snd_port_number){
       
-   std::string temp = "";
-   ssize_t bytes = -1;
-   unsigned char *incom_buf = new unsigned char[BUFLEN];
-   memset(incom_buf,0,BUFLEN);
-   cout << "Enter a message(less than 100 characters):" << endl;
-   getline(cin, temp);
-   if(temp.size() >= 100) {
-       std::cout << "message too long(less than 100 characters)." << endl;
-       std::cout << "-------------------------------------\n" << endl;
-       //continue;
-       return;
-   }
+    std::string temp = "";
+    ssize_t bytes = -1;
+    unsigned char *incom_buf = new unsigned char[BUFLEN];
+    memset(incom_buf,0,BUFLEN);
+    cout << "Enter a message(less than 100 characters):" << endl;
+    getline(cin, temp);
+    if(temp.size() >= 100) {
+        std::cout << "message too long(less than 100 characters)." << endl;
+        std::cout << "-------------------------------------\n" << endl;
+        //continue;
+        return;
+    }
 
-   memset(buff,0,MAX_MSG_LEN);
-   memcpy(buff,temp.c_str(),temp.size());
-   this->send(buff, temp.size(), PORT_NUM); //first
-   memset(buff,0,MAX_MSG_LEN);
+    memset(buff,0,MAX_MSG_LEN);
+    memcpy(buff,temp.c_str(),temp.size());
+    this->send(buff, temp.size(), snd_port_number); //first
+    memset(buff,0,MAX_MSG_LEN);
      
-   std::cout << "-------------------------------------\n" << endl;
-   printf("\nListening...\n");
-   this->listen(incom_buf, bytes, port_number); //first
+    std::cout << "-------------------------------------\n" << endl;
+    printf("\nListening...\n");
+    this->listen(incom_buf, bytes, lst_port_number); //first
+
+    for(int j=0; j < bytes ;++j) {
+        //printf("%02x ",incom_buf[j]);
+    }
+            
+            
+            
+    //aBuffer = "Acknowledged Request...";
+    printf("'\n"); 
+
+    std::cout << ". Received(" << bytes << " bytes):" << endl << "'";
+    for(int j = 0; j < bytes; ++j) {
+        //cout << std::hex << (int)incom_buf[j];
+        cout << (char)incom_buf[j];
+    }
+    std::cout << std::dec << "'" << endl;
 
 }
 
-void Endpoint::run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsigned int port_number ){
+void Endpoint::run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsigned int lst_port_number, unsigned int snd_port_number){
       
      //while(true) {
         memset(incom_buf,0,BUFLEN);
         printf("\nListening...\n");
         cout<<"Server running...waiting for connection."<<endl;
-        if( this->listen(incom_buf, bytes, port_number) ) { //first 
+        if( this->listen(incom_buf, bytes, lst_port_number) ) { //first 
             
             
             printf("\nRequest Received...\n");
@@ -208,9 +224,9 @@ void Endpoint::run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsign
             memset(aBuffer,0,BUFLEN);
             memcpy(aBuffer,temp.c_str(),temp.size());
             
-            send(aBuffer, temp.size(), port_number); //first
+            send(aBuffer, temp.size(), snd_port_number); //first
             for(int j=0; j < bytes ;++j) {
-                printf("%02x ",incom_buf[j]);
+                //printf("%02x ",incom_buf[j]);
             }
             
             
@@ -236,7 +252,7 @@ void Endpoint::run_protocol_rcv(unsigned char *incom_buf, ssize_t &bytes, unsign
             printf("\t|-Protocol : %d\n",eth->h_proto); */
 
             printf("---------------------------------------------\n");
-            this->listen(incom_buf, bytes, port_number);
+            this->listen(incom_buf, bytes, lst_port_number);
 
         }
     //}
