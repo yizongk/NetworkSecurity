@@ -85,7 +85,6 @@ bool Endpoint::listen(unsigned char *buff, ssize_t &bytes, struct shinyarmor_hdr
  * @argc buf_size is only the maxium size of the payload (size of the meaningful contents in buffer). It does not define the maximun size of packet that is going out of this endpoint.
  */
 bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int port_number) {
-    printf("DEBUG: in send()\n");
     // some codes here that detect if buffer is larger than buffer_len, if so break down into packets
     if( buf_size > this->max_msg_len ) {
         printf("Message too big...abort!\n");
@@ -96,12 +95,10 @@ bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int p
     
     // If the message is small enough to send in one go.
     /* memcpy(this->buf_to_send, buffer, this->max_buffer_len); */
-    printf("DEBUG: buf_to_send:");
     for( int i = 0; i < this->max_buffer_len; ++i ) {
         printf("%1x",this->buf_to_send[i]);
     }
     printf("\n");
-    printf("DEBUG: dst_port_num: '%u' and eof: '%d'\n", this->get_packet_dst_port_num(this->buf_to_send), this->is_eof(this->buf_to_send) );
     return endpoint.sendMsg(this->buf_to_send, this->max_buffer_len, 0);
 }
 
@@ -117,10 +114,7 @@ bool Endpoint::shutdown() {
  * builds the packet and store it in Endpoint::buf_to_send
  */
 bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
-    printf("DEBUG: In building_packet()\n");
-    printf("\tDEBUG: total_msg_len = %zu. Glboal buflen = %zu\n", this->max_buffer_len, BUFLEN);
 
-    printf("\tDEBUG: Buf:");
     for( int i = 0; i < this->max_msg_len; ++i ) {
         printf("%1x",buf[i]);
     }
@@ -138,7 +132,6 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
     hdr.src_port_num = this->binded_port_num;
 
     memcpy(this->buf_to_send,&hdr,sizeof(hdr));
-    printf("\tDEBUG: hdr(len: '%zu'):", sizeof(hdr));
     for( int i = 0; i < sizeof(hdr); ++i ) {
         printf("%1x",this->buf_to_send[i]);
     }
@@ -146,13 +139,11 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
 
     memcpy(this->buf_to_send + sizeof(hdr), buf, this->max_msg_len);
 
-    printf("\tDEBUG: hdr + Buf:");
     for( int i = 0; i < this->max_buffer_len; ++i ) {
         printf("%1x",this->buf_to_send[i]);
     }
     printf("\n");
 
-    printf("\tDEBUG: buf_to_send:");
     for( int i = 0; i < this->max_buffer_len; ++i ) {
         printf("%1x",this->buf_to_send[i]);
     }
@@ -207,15 +198,16 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     memset(handshake,0,BUFLEN);
     struct shinyarmor_hdr incoming_hdr;
 
+    printf("\nProtocol - Handshake Sending...\n");
     this->send(buffer, buf_size, port_number); //first
      
-    printf("\nProtocol - Listening...\n");
+    printf("Protocol - Listening...\n");
     this->listen(handshake, handshake_bytes, incoming_hdr); //first
             
     //aBuffer = "Acknowledged Request...";
     printf("'\n"); 
 
-    printf("Protocol - Received(%zu bytes)\n'", handshake_bytes);
+    printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
     for(int j = 0; j < handshake_bytes; ++j) {
         //cout << std::hex << (int)incom_buf[j];
         printf("%c", handshake[j]);
@@ -243,17 +235,18 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
 
     if( this->listen(buff, recieved_buff_bytes, incoming_hdr) ) { //first   SHOULD THIS BE HANDSHAKE AND NOT BUFF? WHEN WILL BE ACTAULLY SET BUFF?
         
-        printf("\nProtocol - Request Received...\n");
+        printf("\nProtocol - Handshake Request Received...\n");
         //printf("%d. Received(%zu):\n'",i,bytes);
         
         memcpy(handshake,temp.c_str(),temp.size());
         
+        printf("Protocol - Handshake Sending...\n");
         this->send(handshake, temp.size(), incoming_hdr.src_port_num); //first
         
         //aBuffer = "Acknowledged Request...";
         printf("'\n"); 
 
-        printf("Protocol - Received(%zu bytes)\n'", handshake_bytes);
+        printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
         for(int j = 0; j < handshake_bytes; ++j) {
             //cout << std::hex << (int)incom_buf[j];
             printf("%c", handshake[j]);
