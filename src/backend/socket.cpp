@@ -180,11 +180,11 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
     memcpy(ether_frame, buf, len*sizeof(uint8_t));
 
     // Report source MAC address to stdout.
-    printf ("\tMAC address for src interface '%s' is '", interface);
+    /* printf ("\tMAC address for src interface '%s' is '", interface);
     for (int i=0; i<6; i++) {
         printf ("%02x:", src_mac[i]);
     }
-    printf("'\n");
+    printf("'\n"); */
 
     // Setting up the destination sockadd_ll
     struct sockaddr_ll dst_device;
@@ -222,7 +222,7 @@ bool Socket::sendMsg(const unsigned char *buf, const size_t len, const int flags
         handle_error("Socket::sendMsg()");
         return false;
     }
-    printf("\tbytes send:'%lu' bytes\n\tether_frame:'%02x'\n\tframe_length:'%zu' bytes\n", bytes, ether_frame, frame_length);
+    /* printf("\tbytes send:'%lu' bytes\n\tether_frame:'%02x'\n\tframe_length:'%zu' bytes\n", bytes, ether_frame, frame_length); */
 
     // Clean up dynamically allocated resources
     delete ether_frame;

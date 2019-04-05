@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     /* For client to send/recieve off to */
     ssize_t bytes = -1;
     unsigned char *out_buf = new unsigned char[MAX_MSG_LEN];
+    unsigned char *incom_buf = new unsigned char[BUFLEN];
     memset(out_buf,0,MAX_MSG_LEN);
 
     Endpoint dummyClient(argv[1]);
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]) {
 
     /* Allow client to send 10 messages to server */
     for(int i  = 0; i < 10; ++i) {
+
         string temp = "";
         cout << "Enter a message(less than 100 characters):" << endl;
         getline(cin, temp);
@@ -34,8 +36,9 @@ int main(int argc, char *argv[]) {
 
         memset(out_buf,0,MAX_MSG_LEN);
         memcpy(out_buf,temp.c_str(),temp.size());
-        dummyClient.send(out_buf, temp.size(), PORT_NUM);
+        dummyClient.send(out_buf, temp.size(), SERVER_PORT_NUM);
         cout << "-------------------------------------\n" << endl;
+  
     }
     dummyClient.shutdown();
 

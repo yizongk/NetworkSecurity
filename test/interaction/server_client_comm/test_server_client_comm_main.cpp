@@ -30,11 +30,11 @@ int main(int argc, char *argv[]) {
     /* PROTOCOL GOES HERE I GUTESS? for testing only */
     for(int i  = 0; i < 1; ++i) {
 
-        if( !dummyClient.send(out_buf, MAX_MSG_LEN, PORT_NUM) )
+        if( !dummyClient.send(out_buf, MAX_MSG_LEN, SERVER_PORT_NUM) )
             pass = false;
 
         memset(incom_buf,0,MAX_MSG_LEN);
-        if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
+        if( dummyServer.listen(incom_buf, bytes) ) {
 
             cout << i << ". Received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {

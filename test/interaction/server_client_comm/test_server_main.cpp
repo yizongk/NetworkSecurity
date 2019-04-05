@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     while(true) {
         memset(incom_buf,0,BUFLEN);
-        if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
+        if( dummyServer.listen(incom_buf, bytes) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
             for(int j=0;j<bytes;++j) {
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 
         }
     }
+
     dummyServer.shutdown();
 
     delete[] incom_buf;

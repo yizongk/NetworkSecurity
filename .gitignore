@@ -7,3 +7,5 @@ test/class/client/test_client_main
 test/interaction/server_client_comm/test_server_client_comm_main
 test/interaction/server_client_comm/test_server_main
 test/interaction/server_client_comm/test_client_main
+test/interaction/shinyarmor/test_server_protocol_main
+test/interaction/shinyarmor/test_client_protocol_main

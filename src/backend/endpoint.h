@@ -24,25 +24,37 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         unsigned char           *buf_to_send;
         struct sockaddr         incom_src_addr;
         int                     incom_src_addr_len;
+        unsigned int            binded_port_num;
         
         /* Feature fcts */
         bool build_packet(unsigned char*, unsigned int);
-        unsigned int get_packet_port_num(unsigned char*);
+        unsigned int get_packet_dst_port_num(unsigned char*);
+        unsigned int get_packet_src_port_num(unsigned char*);
         bool is_eof(unsigned char*);
 
     public:
         /* Core fcts */
         Endpoint();
+        Endpoint(unsigned int);
         Endpoint(const char *);
+        Endpoint(const char *, unsigned int);
         ~Endpoint();
         bool bootup();
-        bool listen(unsigned char *, ssize_t &, unsigned int);    // fct returns after one transmission in the correct port number sepcified in the header, it will be wrped in a while loop and return message of that psecific port
-        bool send(unsigned char *, const size_t, unsigned int);           // fct returns after one transmission, TODO will need to specify where to send to
+        bool listen(unsigned char *, ssize_t &, struct shinyarmor_hdr&  = PLACE_HOLDER_SHINYARMOR);    // fct returns after one transmission in the correct port number sepcified in the header, it will be wrped in a while loop and return message of that psecific port
+        bool send(unsigned char *, const size_t, const unsigned int);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
-
+        unsigned int get_binded_port_num();
+        
         
         /* Interactions fcts that will implement our own protocol */
         // fcts goes here
+
+        bool run_protocol_send(unsigned char *, const size_t, unsigned int); 
+        bool run_protocol_listen(unsigned char *, ssize_t);
+
+
 };
+               
+
 
 #endif
