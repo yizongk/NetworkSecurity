@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
     while(true) {
 
         string temp = "";
-        cout << "Enter a message(less than 10 characters) the 10 char dones't apply just yet:" << endl;
+        cout << "Enter a message(less than 100 characters)" << endl;
         getline(cin, temp);
-        if(temp.size() >= 10) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
-            cout << "message too long(less than 10 characters) the 10 char dones't apply just yet." << endl;
+        if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
+            cout << "message too long(less than 100 characters)" << endl;
             cout << "-------------------------------------\n" << endl;
             continue;
         }
