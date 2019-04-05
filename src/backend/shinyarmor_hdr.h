@@ -10,8 +10,12 @@
 #define SHINYARMOR_HDR_H
 
 struct shinyarmor_hdr {
+    // Default constructor for usage in passing this struct into another function that can give the param struct a default value, in the case that no param for the struct is passed into that function.
+    shinyarmor_hdr() : eof(false), dst_port_num(0), src_port_num(0) { }
+
     bool            eof;        // If true, this is the last packet of the entire transmission.
-    unsigned int    port_num;              // Specify the port number.
+    unsigned int    dst_port_num;              // Specify the port number.
+    unsigned int    src_port_num;           // The port number of the source of the transmission.
 };
 
 #endif
