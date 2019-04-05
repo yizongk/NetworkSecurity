@@ -1,0 +1,25 @@
+.container {
+    position: relative;
+    width: 550px;
+    height: 500px;
+    top: 100px;
+    margin: 0 auto;
+}
+
+.container input {
+    width: 495px;
+    margin-top: 8px;
+    margin-left: 15px;
+}
+
+.container button {
+    margin-top: 20px;
+    margin-left: 15px;
+}
+
+.container .display-users {
+    width: 300px;
+    margin: 40px auto;
+    padding: 0;
+    text-align: center;
+}
