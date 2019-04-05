@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
         for( int i = 0; i < MAX_MSG_LEN; ++i ) {
             cout << std::hex << (int)out_buf[i];
         }
-        cout << std::dec << "' (passing into)" << endl;
+        cout << std::dec << "' (Payload to be sent)" << endl;
         dummyClient.run_protocol_send(out_buf, temp.length(), SERVER_PORT_NUM);
         cout << "-------------------------------------\n" << endl;
     }

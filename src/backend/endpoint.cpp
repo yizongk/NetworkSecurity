@@ -94,11 +94,7 @@ bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int p
     this->build_packet(buffer, port_number);
     
     // If the message is small enough to send in one go.
-    /* memcpy(this->buf_to_send, buffer, this->max_buffer_len); */
-    for( int i = 0; i < this->max_buffer_len; ++i ) {
-        printf("%1x",this->buf_to_send[i]);
-    }
-    printf("\n");
+
     return endpoint.sendMsg(this->buf_to_send, this->max_buffer_len, 0);
 }
 
@@ -115,11 +111,6 @@ bool Endpoint::shutdown() {
  */
 bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
 
-    for( int i = 0; i < this->max_msg_len; ++i ) {
-        printf("%1x",buf[i]);
-    }
-    printf("\n");
-
     /* printf("DEBUG: Bufsdf:");
     for( int i = 0; i < this->max_msg_len; ++i ) {
         printf("%d",buf[200]);                      // THIS IS SUPPOSE TO CAUSE SEG FAULT BUT IT"S NOT!!! 200 is more than the index we allocated for buf!
@@ -132,22 +123,8 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
     hdr.src_port_num = this->binded_port_num;
 
     memcpy(this->buf_to_send,&hdr,sizeof(hdr));
-    for( int i = 0; i < sizeof(hdr); ++i ) {
-        printf("%1x",this->buf_to_send[i]);
-    }
-    printf("\n");
 
     memcpy(this->buf_to_send + sizeof(hdr), buf, this->max_msg_len);
-
-    for( int i = 0; i < this->max_buffer_len; ++i ) {
-        printf("%1x",this->buf_to_send[i]);
-    }
-    printf("\n");
-
-    for( int i = 0; i < this->max_buffer_len; ++i ) {
-        printf("%1x",this->buf_to_send[i]);
-    }
-    printf("\n");
 
     return true;
 }
@@ -198,21 +175,23 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     memset(handshake,0,BUFLEN);
     struct shinyarmor_hdr incoming_hdr;
 
+    std::string temp = "Knock Knock...";
+    memcpy(handshake,temp.c_str(),temp.length());
+
     printf("\nProtocol - Handshake Sending...\n");
-    this->send(buffer, buf_size, port_number); //first
+    this->send(handshake, temp.length(), port_number); //first
      
     printf("Protocol - Listening...\n");
     this->listen(handshake, handshake_bytes, incoming_hdr); //first
-            
-    //aBuffer = "Acknowledged Request...";
-    printf("'\n"); 
-
     printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
     for(int j = 0; j < handshake_bytes; ++j) {
         //cout << std::hex << (int)incom_buf[j];
         printf("%c", handshake[j]);
     }
     printf("'\n");
+
+    printf("Protocol - Payload Sending...\n");
+    this->send(buffer, buf_size, port_number); //first
 
     return true;
 }
@@ -233,29 +212,22 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     printf("\nListening...\n");
     printf("Server running...waiting for connection.\n");
 
-    if( this->listen(buff, recieved_buff_bytes, incoming_hdr) ) { //first   SHOULD THIS BE HANDSHAKE AND NOT BUFF? WHEN WILL BE ACTAULLY SET BUFF?
+    if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first   
         
-        printf("\nProtocol - Handshake Request Received...\n");
-        //printf("%d. Received(%zu):\n'",i,bytes);
-        
-        memcpy(handshake,temp.c_str(),temp.size());
-        
-        printf("Protocol - Handshake Sending...\n");
-        this->send(handshake, temp.size(), incoming_hdr.src_port_num); //first
-        
-        //aBuffer = "Acknowledged Request...";
-        printf("'\n"); 
-
-        printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
+        printf("\nProtocol - Handshake Request Received(%zu bytes)...\n'", handshake_bytes);
         for(int j = 0; j < handshake_bytes; ++j) {
-            //cout << std::hex << (int)incom_buf[j];
             printf("%c", handshake[j]);
         }
         printf("'\n");
-
-        printf("---------------------------------------------\n");
-        this->listen(handshake, handshake_bytes, incoming_hdr);
-
+        
+        memcpy(handshake,temp.c_str(),temp.length());
+        
+        printf("Protocol - Handshake Sending...\n");
+        this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first
+        
+        /* Now the protocol is over, recieve the actual message! */
+        printf("Protocol - Recieving Payload...\n");
+        this->listen(buff, recieved_buff_bytes, incoming_hdr);
     }
 
     return true;
