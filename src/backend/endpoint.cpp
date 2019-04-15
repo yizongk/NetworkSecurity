@@ -1,4 +1,6 @@
 #include <string>
+#include <iostream>
+#include <iomanip>
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
@@ -88,7 +90,12 @@ bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int p
     // some codes here that detect if buffer is larger than buffer_len, if so break down into packets
     if( buf_size > this->max_msg_len ) {
         printf("Message too big...abort!\n");
-        return false; 
+        //return false; 
+        for(int j = 0; j < buf_size; ++j) {
+            std::cout << std::hex << (int)buffer[j];
+            std::cout << (char)buffer[j];
+        }
+
     }
 
     this->build_packet(buffer, port_number);
@@ -228,6 +235,7 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
         /* Now the protocol is over, recieve the actual message! */
         printf("Protocol - Recieving Payload...\n");
         this->listen(buff, recieved_buff_bytes, incoming_hdr);
+        printf("---------------------------------------------\n");
     }
 
     return true;

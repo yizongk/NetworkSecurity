@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
             cout << "Payload received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
-                //cout << (char)incom_buf[j];
+                cout << (char)incom_buf[j];
             }
             cout << std::dec << "'" << endl;
 
