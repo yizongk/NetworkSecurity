@@ -14,31 +14,33 @@ int main(int argc, char *argv[]) {
     bool pass = true;
 
     /* For client to send/recieve off to */
-    ssize_t bytes = -1;
     unsigned char *out_buf = new unsigned char[MAX_MSG_LEN];
     memset(out_buf,0,MAX_MSG_LEN);
 
-    Endpoint dummyClient(argv[1]);
+    Endpoint dummyClient(argv[1], CLIENT_PORT_NUM);
     dummyClient.bootup();
 
     while(true) {
-        string temp = "";
-        cout << "Enter a message(less than 10 characters) the 10 char dones't apply just yet:" << endl;
-        getline(cin, temp);
-        if(temp.size() >= 10) {     //should amek sure the tmep.size() is converted to number of bytes small than MAX_MSG_LEN
-            cout << "message too long(less than 10 characters) the 10 char dones't apply just yet." << endl;
-            cout << "-------------------------------------\n" << endl;
-            continue;
-        }
 
+        string temp = "";
+        cout << "Enter a message(less than 100 characters)" << endl;
+        getline(cin, temp);
+/*        
+        if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
+            cout << "message too long(less than 100 characters)" << endl;
+            cout << "-------------------------------------\n" << endl;
+            //continue;
+        }
+*/
         memset(out_buf,0,MAX_MSG_LEN);
         memcpy(out_buf,temp.c_str(),temp.size());
         cout << "DEBUG: Buf:'";
         for( int i = 0; i < MAX_MSG_LEN; ++i ) {
             cout << std::hex << (int)out_buf[i];
         }
-        cout << std::dec << "' (passing into)" << endl;
-        dummyClient.send(out_buf, temp.size(), PORT_NUM);
+        cout << std::dec << "' (Payload to be sent)" << endl;
+        dummyClient.run_protocol_send(out_buf, temp.length(), SERVER_PORT_NUM);
+        cout << "-------------------------------------\n" << endl;
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();

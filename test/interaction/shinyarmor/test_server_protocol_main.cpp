@@ -18,17 +18,17 @@ int main(int argc, char *argv[]) {
     unsigned char *incom_buf = new unsigned char[BUFLEN];
     memset(incom_buf,0,BUFLEN);
 
-    Endpoint dummyServer(argv[1]);
+    Endpoint dummyServer(argv[1], SERVER_PORT_NUM);
     dummyServer.bootup();
 
     while(true) {
         memset(incom_buf,0,BUFLEN);
-        if( dummyServer.listen(incom_buf, bytes, PORT_NUM) ) {
+        if( dummyServer.run_protocol_listen(incom_buf, bytes) ) {
 
-            cout << ". Received(" << bytes << " bytes):" << endl << "'";
+            cout << "Payload received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
-                //cout << (char)incom_buf[j];
+                cout << (char)incom_buf[j];
             }
             cout << std::dec << "'" << endl;
 
