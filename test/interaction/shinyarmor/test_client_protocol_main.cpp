@@ -25,13 +25,12 @@ int main(int argc, char *argv[]) {
         string temp = "";
         cout << "Enter a message(less than 100 characters)" << endl;
         getline(cin, temp);
-/*        
         if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
             cout << "message too long(less than 100 characters)" << endl;
             cout << "-------------------------------------\n" << endl;
-            //continue;
+            continue;
         }
-*/
+
         memset(out_buf,0,MAX_MSG_LEN);
         memcpy(out_buf,temp.c_str(),temp.size());
         cout << "DEBUG: Buf:'";
@@ -40,7 +39,6 @@ int main(int argc, char *argv[]) {
         }
         cout << std::dec << "' (Payload to be sent)" << endl;
         dummyClient.run_protocol_send(out_buf, temp.length(), SERVER_PORT_NUM);
-        cout << "-------------------------------------\n" << endl;
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();
