@@ -1,20 +1,20 @@
 INSTALLDIR := ./
 CC         := /usr/bin/g++
 CFLAGS     += -Wall
-OBJECTS    := test_server_main.o endpoint.o socket.o
-EXE        := test_server_main
+OBJECTS    := test_endpoint_main.o endpoint.o socket.o
+EXE        := test_endpoint_main
 
 
 .PHONY: all
 all: $(EXE)
 
 
-test_server_main: $(OBJECTS)
+test_endpoint_main: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 	@ echo Changed files: $?
 
-test_server_main.o: test_server_main.cpp
-	g++ -c test_server_main.cpp
+test_endpoint_main.o: test_endpoint_main.cpp
+	g++ -c test_endpoint_main.cpp
 socket.o: ../../../src/backend/socket.cpp
 	g++ -c ../../../src/backend/socket.cpp
 endpoint.o: ../../../src/backend/endpoint.cpp

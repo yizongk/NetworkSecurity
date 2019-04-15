@@ -1,6 +1,4 @@
 #include <string>
-#include <iostream>
-#include <iomanip>
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
@@ -235,7 +233,9 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
         /* Now the protocol is over, recieve the actual message! */
         printf("Protocol - Recieving Payload...\n");
         this->listen(buff, recieved_buff_bytes, incoming_hdr);
+
         printf("---------------------------------------------\n");
+
     }
 
     return true;
