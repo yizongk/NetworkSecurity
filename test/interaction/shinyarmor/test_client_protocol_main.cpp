@@ -25,10 +25,7 @@ int main(int argc, char *argv[]) {
         string temp = "";
         cout << "Enter a message(less than 100 characters)" << endl;
         getline(cin, temp);
-<<<<<<< HEAD
-/*        
-=======
->>>>>>> eb95751597f8dcd73eb7f1a27807dc0a088501ed
+/*
         if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
             cout << "message too long(less than 100 characters)" << endl;
             cout << "-------------------------------------\n" << endl;

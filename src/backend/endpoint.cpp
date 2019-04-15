@@ -1,4 +1,6 @@
 #include <string>
+#include <iomanip>
+#include <iostream>
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
