@@ -62,6 +62,8 @@ bool Endpoint::bootup() {
  * The returning bool is returned true, if the current incoming packet is completed successfully,
  * If returning bool is returned false, all pass-by-reference arg should not be consider valid.
  * 
+ * Will ignore duplacated incoming packet
+ * 
  */
 bool Endpoint::listen(unsigned char *payload, ssize_t &bytes, struct shinyarmor_hdr& income_hdr) {
     
