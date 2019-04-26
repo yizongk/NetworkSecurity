@@ -2,6 +2,7 @@
 #define ENDPOINT_H
 
 #include <string>
+#include <map>
 #include "socket.h"
 #include "shinyarmor_hdr.h"
 #include "constant.h"
@@ -18,19 +19,22 @@
  */
 class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARANTEE ONE MESSAGE FROM NEXT MSG WITH SPECIFIED PROT NUM
     private:
-        Socket                  endpoint;
-        size_t                  max_buffer_len;
-        size_t                  max_msg_len;
-        unsigned char           *buf_to_send;
-        struct sockaddr         incom_src_addr;
-        int                     incom_src_addr_len;
-        unsigned int            binded_port_num;
+        Socket                          endpoint;
+        size_t                          max_buffer_len;
+        size_t                          max_msg_len;
+        unsigned char                   *buf_to_send;
+        struct sockaddr                 incom_src_addr;
+        int                             incom_src_addr_len;
+        unsigned int                    binded_port_num;
+        std::map<unsigned int, bool>    visited_hdr_id;
         
         /* Feature fcts */
         bool build_packet(unsigned char*, unsigned int);
-        unsigned int get_packet_dst_port_num(unsigned char*);
-        unsigned int get_packet_src_port_num(unsigned char*);
-        bool is_eof(unsigned char*);
+        unsigned int header_get_packet_dst_port_num(unsigned char*);
+        unsigned int header_get_packet_src_port_num(unsigned char*);
+        bool header_is_eof(unsigned char*);
+        bool packet_repeat(struct shinyarmor_hdr) const;
+        unsigned int packet_id_generator();
 
     public:
         /* Core fcts */

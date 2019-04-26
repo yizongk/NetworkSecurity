@@ -247,11 +247,11 @@ bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes, socka
     uint8_t *holder = new uint8_t[len];
     memset(holder,0,len * sizeof(uint8_t));
     memset(buf,0,len);    // Blank out the array.
+    bytes = -1;
     //ssize_t bytes = -1;   // The actualy len of contents recieved from socket.  
                                 // (>1) means the len of message. (==0) means len of msg is 0 or peer has performed an orderly shutdown. 
                                 // (==-1) means an error occurred. In the event of an error, errno is set to indicate the error.
 
-    
     // src_addr will now contain information about where src comes from.
     if( ( bytes = recvfrom(this->fd,holder,len*sizeof(uint8_t),0,&src_addr,(socklen_t *)&src_addr_len) ) < 0 ) {
         error_code = errno;
@@ -259,6 +259,7 @@ bool Socket::recvMsg(unsigned char *buf, const size_t len, ssize_t &bytes, socka
         return false;
     }
     memcpy(buf,holder,len * sizeof(uint8_t));
+    //printf("\tSocket::RecvMsg() ran, got %ld bytes\n", bytes);
     //printf("\tGot Message(%ld bytes):'%s'\n", bytes, buf);
     //printf("\tGot Message(%ld bytes):'%02x'\n", bytes, holder);
     // do something about memset(buf, holder)       // NOT THE JOB OF SOCKET! That's the job of server, leave socket as a way to transfer RAW data, all of the RAW data. Server and client (or a seperate protocol class will parse it.)

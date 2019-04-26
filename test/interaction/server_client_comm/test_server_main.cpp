@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 
     while(true) {
         memset(incom_buf,0,BUFLEN);
+        bytes = -1;
         if( dummyServer.listen(incom_buf, bytes) ) {
 
             /* printf("%d. Received(%zu):\n'",i,bytes);
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
             }
             printf("'\n"); */
 
-            cout << ". Received(" << bytes << " bytes):" << endl << "'";
+            cout << "Listen returned... Received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
                 //cout << (char)incom_buf[j];

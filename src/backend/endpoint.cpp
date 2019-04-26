@@ -1,4 +1,7 @@
 #include <string>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+#include <limits>     /* numeric_limits */
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
@@ -6,7 +9,7 @@ struct shinyarmor_hdr PLACE_HOLDER_SHINYARMOR;
 
 /* Default constructor
  */
-Endpoint::Endpoint() : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(SERVER_PORT_NUM) {
+Endpoint::Endpoint() : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(SERVER_PORT_NUM), visited_hdr_id() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
     this->buf_to_send = new unsigned char[this->max_buffer_len];
     memset(this->buf_to_send, 0, this->max_buffer_len);
@@ -14,7 +17,7 @@ Endpoint::Endpoint() : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_s
 
 /* Binds a port number 
  */
-Endpoint::Endpoint(unsigned int port_number) : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(port_number) {
+Endpoint::Endpoint(unsigned int port_number) : max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(port_number), visited_hdr_id() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
     this->buf_to_send = new unsigned char[this->max_buffer_len];
     memset(this->buf_to_send, 0, this->max_buffer_len);
@@ -22,7 +25,7 @@ Endpoint::Endpoint(unsigned int port_number) : max_msg_len(MAX_MSG_LEN), max_buf
 
 /*  Changes the default interface name that is used to bind the underlying socket
  */
-Endpoint::Endpoint(const char *interface) : endpoint(interface), max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(SERVER_PORT_NUM) {
+Endpoint::Endpoint(const char *interface) : endpoint(interface), max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(SERVER_PORT_NUM), visited_hdr_id() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
     this->buf_to_send = new unsigned char[this->max_buffer_len];
     memset(this->buf_to_send, 0, this->max_buffer_len);
@@ -30,7 +33,7 @@ Endpoint::Endpoint(const char *interface) : endpoint(interface), max_msg_len(MAX
 
 /*  Changes the default interface name that is used to bind the underlying socket. Also binds a port number
  */
-Endpoint::Endpoint(const char *interface, unsigned int port_number) : endpoint(interface), max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(port_number) {
+Endpoint::Endpoint(const char *interface, unsigned int port_number) : endpoint(interface), max_msg_len(MAX_MSG_LEN), max_buffer_len(BUFLEN), incom_src_addr(), incom_src_addr_len(sizeof(incom_src_addr)), binded_port_num(port_number), visited_hdr_id() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
     this->buf_to_send = new unsigned char[this->max_buffer_len];
     memset(this->buf_to_send, 0, this->max_buffer_len);
@@ -40,7 +43,7 @@ Endpoint::Endpoint(const char *interface, unsigned int port_number) : endpoint(i
  */
 Endpoint::~Endpoint() {
     memset(&incom_src_addr,0,sizeof(incom_src_addr));
-    delete this->buf_to_send;
+    delete[] this->buf_to_send;
     this->shutdown();
 }
 
@@ -51,33 +54,44 @@ bool Endpoint::bootup() {
 }
 
 /* Listens for incoming transmissions. bytes is how much bytes was receieved.
- * @argc port_number is use to filter incoming packets with header defined in shinyarmor_hdr.h
+ * @arg &income_hdr, will contain the header of the received packet.
+ * @arg &buff will hold the payload of the packet.
  * Separates the header and payload. Return both by method of pass by reference.
- * Return condition: only returns when a incoming transmission that matches our port number defined int constant.h
- * After it returns, buff will hold the message of the transmmission, the header is not part of it (it's been striped away)
  * 
- * The returning bool is returned true, if the current incoming packet is an end-of-file,
- * meaning the current incoming packet is the last of the series of packet that came in
+ * Return condition: only returns when a incoming transmission that matches our binded port number
+ * The returning bool is returned true, if the current incoming packet is completed successfully,
+ * If returning bool is returned false, all pass-by-reference arg should not be consider valid.
+ * 
+ * Will ignore duplacated incoming packet
+ * 
  */
-bool Endpoint::listen(unsigned char *buff, ssize_t &bytes, struct shinyarmor_hdr& income_hdr) {
+bool Endpoint::listen(unsigned char *payload, ssize_t &bytes, struct shinyarmor_hdr& income_hdr) {
     
-    // SOMEHOW STIRP OFF THE HEADER HERE
     unsigned char *reciever = new unsigned char[this->max_buffer_len];
 
+    printf("Endpoint Listening()\n");
     while(true) {   // while it's not our port number
+        
         memset(reciever,0,this->max_buffer_len);
         endpoint.recvMsg(reciever, this->max_buffer_len, bytes, this->incom_src_addr, this->incom_src_addr_len);
         memcpy(&income_hdr,reciever,sizeof(income_hdr));
-
+        if( this->packet_repeat(income_hdr) ) {
+            continue;
+        }
+        
         if(income_hdr.dst_port_num == this->binded_port_num) {
             break;
         }
     }
 
-    memcpy(buff, reciever + sizeof(income_hdr), this->max_msg_len);
+    // Add packet id to list of all processed packet id
+    visited_hdr_id[income_hdr.packet_id] = true;
+
+    // Copy payload to buff
+    memcpy(payload, reciever + sizeof(income_hdr), this->max_msg_len);
 
     delete[] reciever;
-    return income_hdr.eof;
+    return true;
 }
 
 /* Sends ONE COMPLETE outgoing transmission (Our entire protocol is ran through once).
@@ -118,6 +132,7 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
     printf("\n"); */
 
     struct shinyarmor_hdr hdr;
+    hdr.packet_id = this->packet_id_generator();
     hdr.eof = true;
     hdr.dst_port_num = port_number;
     hdr.src_port_num = this->binded_port_num;
@@ -132,7 +147,7 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
 /* 
  * Return destination port number base on the shinyarmor_h
  */
-unsigned int Endpoint::get_packet_dst_port_num(unsigned char* income_buf) {
+unsigned int Endpoint::header_get_packet_dst_port_num(unsigned char* income_buf) {
     struct shinyarmor_hdr temp;
     memcpy(&temp, income_buf, sizeof(temp));
     return temp.dst_port_num;
@@ -141,7 +156,7 @@ unsigned int Endpoint::get_packet_dst_port_num(unsigned char* income_buf) {
 /* 
  * Return source port number base on the shinyarmor_h
  */
-unsigned int Endpoint::get_packet_src_port_num(unsigned char* income_buf) {
+unsigned int Endpoint::header_get_packet_src_port_num(unsigned char* income_buf) {
     struct shinyarmor_hdr temp;
     memcpy(&temp, income_buf, sizeof(temp));
     return temp.src_port_num;
@@ -150,7 +165,7 @@ unsigned int Endpoint::get_packet_src_port_num(unsigned char* income_buf) {
 /* 
  * Returns bool eof base on shinyarmor_h
  */
-bool Endpoint::is_eof(unsigned char* income_buf) {
+bool Endpoint::header_is_eof(unsigned char* income_buf) {
     struct shinyarmor_hdr temp;
     memcpy(&temp, income_buf, sizeof(temp));
     return temp.eof;
@@ -161,6 +176,27 @@ bool Endpoint::is_eof(unsigned char* income_buf) {
  */
 unsigned int Endpoint::get_binded_port_num() {
     return this->binded_port_num;
+}
+
+/* 
+ * Checks if incoming packet is a packet that is already been procesed, aka duplicated messages
+ *  */
+bool Endpoint::packet_repeat(struct shinyarmor_hdr a) const {
+    if ( visited_hdr_id.find(a.packet_id) == visited_hdr_id.end() ) {
+        return false;
+    }
+
+    return true;
+}
+
+/* 
+ *  Generates a random number in the range of unsigned int
+ *  */
+unsigned int Endpoint::packet_id_generator() {
+    // initialize random seed
+    srand(time(NULL));
+
+    return ( rand() % std::numeric_limits<unsigned int>::max() );
 }
 
 // Add fcts here to 
