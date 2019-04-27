@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <string>
 #include "../../../src/backend/endpoint.h"
 #include "../../../src/backend/constant.h"
 
@@ -25,10 +26,42 @@ int main(int argc, char *argv[]) {
         string temp = "";
         cout << "Enter a message(less than 100 characters)" << endl;
         getline(cin, temp);
+        
         if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
             cout << "message too long(less than 100 characters)" << endl;
             cout << "-------------------------------------\n" << endl;
-            continue;
+            
+            int curr_index = 0;
+            size_t chunk_s = MAX_MSG_LEN;
+            while(curr_index < temp.size()){
+
+                string temp_partial = "";
+                
+                temp_partial = temp.substr(curr_index, chunk_s);
+                memset(out_buf,0,chunk_s);
+                memcpy(out_buf, temp_partial.c_str(), temp_partial.size());
+                
+                cout << "DEBUG: Buf:'";
+                for( int i = 0; i < chunk_s; ++i ) {
+                    cout << std::hex << (int)out_buf[i];
+                }
+        
+                cout << std::dec << "' (Payload to be sent)" << endl;
+                dummyClient.run_protocol_send(out_buf, temp_partial.length(), SERVER_PORT_NUM);
+                cout << "-------------------------------------\n" << endl;
+
+                int last_chunk = temp.size() - curr_index;
+                if(curr_index < temp.size() && last_chunk < 100){
+
+                    chunk_s = last_chunk;
+                }
+                curr_index += 100;
+
+
+             }
+
+
+            //continue;
         }
 
         memset(out_buf,0,MAX_MSG_LEN);

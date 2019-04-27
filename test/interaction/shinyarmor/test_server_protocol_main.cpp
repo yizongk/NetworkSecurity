@@ -22,20 +22,25 @@ int main(int argc, char *argv[]) {
     dummyServer.bootup();
 
     while(true) {
+        
+        cout << "Message Incoming" << endl;
         memset(incom_buf,0,BUFLEN);
         if( dummyServer.run_protocol_listen(incom_buf, bytes) ) {
-
+            
             cout << "Payload received(" << bytes << " bytes):" << endl << "'";
+            ///*
             for(int j = 0; j < bytes; ++j) {
-                cout << std::hex << (int)incom_buf[j];
-                //cout << (char)incom_buf[j];
+                //cout << std::hex << (int)incom_buf[j];
+                cout << (char)incom_buf[j];
             }
+            //*/
             cout << std::dec << "'" << endl;
 
             printf("---------------------------------------------\n");
-
+            
 
         }
+        
     }
     dummyServer.shutdown();
 

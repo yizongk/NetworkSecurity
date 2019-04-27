@@ -215,10 +215,10 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     memcpy(handshake,temp.c_str(),temp.length());
 
     printf("\nProtocol - Handshake Sending...\n");
-    this->send(handshake, temp.length(), port_number); //first
+    this->send(handshake, temp.length(), port_number); //first send
      
     printf("Protocol - Listening...\n");
-    this->listen(handshake, handshake_bytes, incoming_hdr); //first
+    this->listen(handshake, handshake_bytes, incoming_hdr); //first listen
     printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
     for(int j = 0; j < handshake_bytes; ++j) {
         //cout << std::hex << (int)incom_buf[j];
@@ -227,7 +227,7 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     printf("'\n");
 
     printf("Protocol - Payload Sending...\n");
-    this->send(buffer, buf_size, port_number); //first
+    this->send(buffer, buf_size, port_number); //first send
 
     return true;
 }
@@ -248,7 +248,7 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     printf("\nListening...\n");
     printf("Server running...waiting for connection.\n");
 
-    if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first   
+    if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first listen
         
         printf("\nProtocol - Handshake Request Received(%zu bytes)...\n'", handshake_bytes);
         for(int j = 0; j < handshake_bytes; ++j) {
@@ -259,11 +259,11 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
         memcpy(handshake,temp.c_str(),temp.length());
         
         printf("Protocol - Handshake Sending...\n");
-        this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first
+        this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first send
         
         /* Now the protocol is over, recieve the actual message! */
         printf("Protocol - Recieving Payload...\n");
-        this->listen(buff, recieved_buff_bytes, incoming_hdr);
+        this->listen(buff, recieved_buff_bytes, incoming_hdr); //first listen
     }
 
     return true;
