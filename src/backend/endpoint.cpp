@@ -262,7 +262,7 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     printf("\nListening...\n");
     printf("Server running...waiting for connection.\n*********************************\n");
 
-    if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first   
+    if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first listen
         
         printf("Protocol Listen - Initial Handshake Request Received(%zu bytes) from client...\n'", handshake_bytes);
         for(int j = 0; j < handshake_bytes; ++j) {
