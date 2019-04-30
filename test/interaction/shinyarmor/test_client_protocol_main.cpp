@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
         
         if(temp.size() >= 100) {     //should make sure the temp.size() is converted to number of bytes small than MAX_MSG_LEN
             cout << "message too long(less than 100 characters)" << endl;
-            cout << "-------------------------------------\n" << endl;
+            cout << "---------------------------------------------\n" << endl;
             
             int curr_index = 0;
             size_t chunk_s = MAX_MSG_LEN;
@@ -44,14 +44,11 @@ int main(int argc, char *argv[]) {
                 memset(out_buf,0,chunk_s);
                 memcpy(out_buf, temp_partial.c_str(), temp_partial.size());
                 
-                cout << "DEBUG: Buf:'";
-                for( int i = 0; i < chunk_s; ++i ) {
-                    cout << std::hex << (int)out_buf[i];
-                }
-        
-                cout << std::dec << "' (Payload to be sent)" << endl;
+                /* printf("DEBUG: Buf:'");
+                dummyClient.print_bytes_as(out_buf,temp.size(),"char");
+                printf("' (Payload to be sent)\n"); */
                 dummyClient.run_protocol_send(out_buf, temp_partial.length(), SERVER_PORT_NUM);
-                cout << "-------------------------------------\n" << endl;
+                cout << "---------------------------------------------\n" << endl;
 
                 int last_chunk = temp.size() - curr_index;
                 if(curr_index < temp.size() && last_chunk < 100){
@@ -64,15 +61,12 @@ int main(int argc, char *argv[]) {
              }
 
 
-            //continue;
         } else {
             memset(out_buf,0,MAX_MSG_LEN);
             memcpy(out_buf,temp.c_str(),temp.size());
-            cout << "DEBUG: Buf:'";
-            for( int i = 0; i < MAX_MSG_LEN; ++i ) {
-                cout << std::hex << (int)out_buf[i];
-            }
-            cout << std::dec << "' (Payload to be sent)" << endl;
+            /* printf("DEBUG: Buf:'");
+            dummyClient.print_bytes_as(out_buf,temp.size(),"char");
+            printf("' (Payload to be sent)\n"); */
             dummyClient.run_protocol_send(out_buf, temp.length(), SERVER_PORT_NUM);
         }
 
@@ -97,7 +91,7 @@ int main(int argc, char *argv[]) {
         
 
 
-        cout << "-------------------------------------\n" << endl;
+        cout << "---------------------------------------------\n" << endl;
     }
     dummyClient.shutdown();
 

@@ -49,6 +49,7 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         bool send(unsigned char *, const size_t, const unsigned int);           // fct returns after one transmission, TODO will need to specify where to send to
         bool shutdown();
         unsigned int get_binded_port_num();
+        void print_bytes_as(unsigned char *, ssize_t, std::string);
         
         
         /* Interactions fcts that will implement our own protocol */

@@ -26,7 +26,8 @@ int main(int argc, char *argv[]) {
 
     while(true) {
         
-        cout << "Message Incoming" << endl;
+        printf("\n\tListening...\n");
+        printf("\tServer running...waiting for connection.\n---------------------------------------------\n");
         memset(incom_buf,0,BUFLEN);
         if( dummyServer.run_protocol_listen(incom_buf, bytes) ) {
 
