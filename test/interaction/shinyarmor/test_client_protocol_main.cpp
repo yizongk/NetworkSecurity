@@ -13,6 +13,9 @@ int main(int argc, char *argv[]) {
 
     bool pass = true;
 
+    // initialize random seed for client instance
+    srand(time(NULL));
+
     /* For client to send/recieve off to */
     unsigned char *out_buf = new unsigned char[MAX_MSG_LEN];
     memset(out_buf,0,MAX_MSG_LEN);
@@ -39,6 +42,28 @@ int main(int argc, char *argv[]) {
         }
         cout << std::dec << "' (Payload to be sent)" << endl;
         dummyClient.run_protocol_send(out_buf, temp.length(), SERVER_PORT_NUM);
+
+
+
+        /* cout << "Enter a handshake" << endl;
+        getline(cin, temp);
+        memset(out_buf,0,MAX_MSG_LEN);
+        memcpy(out_buf,temp.c_str(),temp.size());
+        dummyClient.send(out_buf, temp.length(), SERVER_PORT_NUM);
+
+        unsigned char *in_buf = new unsigned char[MAX_MSG_LEN];
+        memset(in_buf,0,MAX_MSG_LEN);
+        ssize_t in_bytes = -1;
+        dummyClient.listen(in_buf,in_bytes);
+
+        cout << "Enter a payload" << endl;
+        getline(cin, temp);
+        memset(out_buf,0,MAX_MSG_LEN);
+        memcpy(out_buf,temp.c_str(),temp.size());
+        dummyClient.send(out_buf, temp.length(), SERVER_PORT_NUM); */
+        
+
+
         cout << "-------------------------------------\n" << endl;
     }
     dummyClient.shutdown();

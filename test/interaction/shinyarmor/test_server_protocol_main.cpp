@@ -11,6 +11,9 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    // initialize random seed for server instance
+    srand(time(NULL));
+
     bool pass = true;
 
     /* For server to send/recieve off to */
@@ -25,12 +28,12 @@ int main(int argc, char *argv[]) {
         memset(incom_buf,0,BUFLEN);
         if( dummyServer.run_protocol_listen(incom_buf, bytes) ) {
 
-            cout << "Payload received(" << bytes << " bytes):" << endl << "'";
+            /* cout << "Payload received(" << bytes << " bytes):" << endl << "'";
             for(int j = 0; j < bytes; ++j) {
                 cout << std::hex << (int)incom_buf[j];
                 //cout << (char)incom_buf[j];
             }
-            cout << std::dec << "'" << endl;
+            cout << std::dec << "'" << endl; */
 
             printf("---------------------------------------------\n");
 

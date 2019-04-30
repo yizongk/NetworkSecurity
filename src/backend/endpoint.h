@@ -30,6 +30,7 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
         
         /* Feature fcts */
         bool build_packet(unsigned char*, unsigned int);
+        unsigned int header_get_packet_id(unsigned char*);
         unsigned int header_get_packet_dst_port_num(unsigned char*);
         unsigned int header_get_packet_src_port_num(unsigned char*);
         bool header_is_eof(unsigned char*);
