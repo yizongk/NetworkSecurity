@@ -69,7 +69,7 @@ bool Endpoint::listen(unsigned char *payload, ssize_t &bytes, struct shinyarmor_
     
     unsigned char *reciever = new unsigned char[this->max_buffer_len];
 
-    printf("Endpoint Listening()\n");
+    //printf("Endpoint Listening()\n");
     while(true) {   // while it's not our port number
         
         memset(reciever,0,this->max_buffer_len);
@@ -90,6 +90,10 @@ bool Endpoint::listen(unsigned char *payload, ssize_t &bytes, struct shinyarmor_
     // Copy payload to buff
     memcpy(payload, reciever + sizeof(income_hdr), this->max_msg_len);
 
+    struct shinyarmor_hdr hdr;
+    memcpy(&hdr, reciever, sizeof(hdr));
+    printf("recieved message id and from_port_number: %u, %u\n", this->header_get_packet_id(reciever), this->header_get_packet_dst_port_num(reciever));
+
     delete[] reciever;
     return true;
 }
@@ -109,6 +113,7 @@ bool Endpoint::send(unsigned char *buffer, const size_t buf_size, unsigned int p
     
     // If the message is small enough to send in one go.
 
+    printf("sended message id and to_port_number: %u, %u\n", this->header_get_packet_id(this->buf_to_send), this->header_get_packet_dst_port_num(this->buf_to_send));
     return endpoint.sendMsg(this->buf_to_send, this->max_buffer_len, 0);
 }
 
@@ -142,6 +147,15 @@ bool Endpoint::build_packet(unsigned char* buf, unsigned int port_number) {
     memcpy(this->buf_to_send + sizeof(hdr), buf, this->max_msg_len);
 
     return true;
+}
+
+/* 
+ * Return packet ID base on shinyarmor_h
+ * */
+unsigned int Endpoint::header_get_packet_id(unsigned char* income_buf) {
+    struct shinyarmor_hdr temp;
+    memcpy(&temp, income_buf, sizeof(temp));
+    return temp.packet_id;
 }
 
 /* 
@@ -182,10 +196,12 @@ unsigned int Endpoint::get_binded_port_num() {
  * Checks if incoming packet is a packet that is already been procesed, aka duplicated messages
  *  */
 bool Endpoint::packet_repeat(struct shinyarmor_hdr a) const {
+    //printf("packet checking repated\n");
     if ( visited_hdr_id.find(a.packet_id) == visited_hdr_id.end() ) {
         return false;
     }
 
+    printf("repeated id: %u\n", a.packet_id);
     return true;
 }
 
@@ -193,9 +209,7 @@ bool Endpoint::packet_repeat(struct shinyarmor_hdr a) const {
  *  Generates a random number in the range of unsigned int
  *  */
 unsigned int Endpoint::packet_id_generator() {
-    // initialize random seed
-    srand(time(NULL));
-
+    printf("generated: %u\n",rand() % std::numeric_limits<unsigned int>::max());
     return ( rand() % std::numeric_limits<unsigned int>::max() );
 }
 
@@ -214,20 +228,20 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     std::string temp = "Knock Knock...";
     memcpy(handshake,temp.c_str(),temp.length());
 
-    printf("\nProtocol - Handshake Sending...\n");
-    this->send(handshake, temp.length(), port_number); //first send
+    printf("\nProtocol Send - Handshake Sending to server...\n");
+    this->send(handshake, temp.length(), port_number); //first
      
-    printf("Protocol - Listening...\n");
-    this->listen(handshake, handshake_bytes, incoming_hdr); //first listen
-    printf("Protocol - Hanshake Received(%zu bytes)\n'", handshake_bytes);
+    printf("Protocol Send - Listening for replying ack from server...\n");
+    this->listen(handshake, handshake_bytes, incoming_hdr); //first
+    printf("Protocol Send - Ack Received from server(%zu bytes)\n'", handshake_bytes);
     for(int j = 0; j < handshake_bytes; ++j) {
         //cout << std::hex << (int)incom_buf[j];
         printf("%c", handshake[j]);
     }
     printf("'\n");
 
-    printf("Protocol - Payload Sending...\n");
-    this->send(buffer, buf_size, port_number); //first send
+    printf("Protocol Send - Payload Sending...\n");
+    this->send(buffer, buf_size, port_number); //first
 
     return true;
 }
@@ -242,15 +256,15 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     memset(handshake,0,BUFLEN);
     struct shinyarmor_hdr incoming_hdr;
 
-    std::string temp = "Acknowledged Request...";
+    std::string temp = "Ack Ack Ack";
       
 
     printf("\nListening...\n");
-    printf("Server running...waiting for connection.\n");
+    printf("Server running...waiting for connection.\n*********************************\n");
 
     if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first listen
         
-        printf("\nProtocol - Handshake Request Received(%zu bytes)...\n'", handshake_bytes);
+        printf("Protocol Listen - Initial Handshake Request Received(%zu bytes) from client...\n'", handshake_bytes);
         for(int j = 0; j < handshake_bytes; ++j) {
             printf("%c", handshake[j]);
         }
@@ -258,12 +272,17 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
         
         memcpy(handshake,temp.c_str(),temp.length());
         
-        printf("Protocol - Handshake Sending...\n");
-        this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first send
+        printf("Protocol Listen - Ack Sending to client...\n");
+        this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first
         
         /* Now the protocol is over, recieve the actual message! */
-        printf("Protocol - Recieving Payload...\n");
-        this->listen(buff, recieved_buff_bytes, incoming_hdr); //first listen
+        printf("Protocol Listen - Listening for Payload from client...\n");
+        this->listen(buff, recieved_buff_bytes, incoming_hdr);
+        printf("\nPayload (%zu bytes) next line\n'", recieved_buff_bytes);
+        for(int j = 0; j < recieved_buff_bytes; ++j) {
+            printf("%c", buff[j]);
+        }
+        printf("'\n");
     }
 
     return true;
