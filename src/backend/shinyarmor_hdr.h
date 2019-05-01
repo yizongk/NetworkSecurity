@@ -19,4 +19,6 @@ struct shinyarmor_hdr {
     unsigned int    src_port_num;           // The port number of the source of the transmission.
 };
 
+void reset_shinarmor_hdr(struct shinyarmor_hdr&);
+
 #endif
