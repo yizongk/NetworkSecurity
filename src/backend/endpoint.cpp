@@ -1,7 +1,10 @@
 #include <string>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-#include <limits>     /* numeric_limits */
+#include <limits>       /* numeric_limits */
+#include <future>       /* std::async, std::future */
+#include <chrono>       /* std::chrono::milliseconds */
+#include <functional>   /* std::bind */
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
@@ -255,17 +258,41 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     printf("send: 'Knock Knock...'\n");
     this->send(handshake, temp.length(), port_number); //first
      
+    std::future<bool> fut = std::async( std::bind( &Endpoint::listen, this, std::ref(handshake), std::ref(handshake_bytes), std::ref(incoming_hdr) ) );
     printf("Protocol Send - Listening for replying ack from server...\n");
-    this->listen(handshake, handshake_bytes, incoming_hdr); //first
+    std::chrono::milliseconds span(100);
+    while( fut.wait_for(span) == std::future_status::timeout );
+    bool status = fut.get();
+    if(status == true) {
+        printf("timeout did not happen\n");
+    } else {
+        printf("timeout!\n");
+        return false;
+    }
+    /* if( !this->listen(handshake, handshake_bytes, incoming_hdr) ){      // M<AYBE TIME THIS CALL, don't need to modify listen, just need to time it
+        // dosomething to stop attack
+    }  */
+    
     printf("Protocol Send - Ack Received from server(%zu bytes)\ngot: '", handshake_bytes);
     this->print_bytes_as(handshake,handshake_bytes,"char");
-    printf("\n");
+    printf("'\n");
 
     printf("Protocol Send - Payload Sending...\n");
     printf("send: '");
     this->print_bytes_as(buffer,buf_size,"char");
     printf("'\n");
     this->send(buffer, buf_size, port_number); //first
+
+    reset_shinarmor_hdr(incoming_hdr);  // From shinyarmor_hdr.h
+    memset(handshake,0,BUFLEN);
+    handshake_bytes = -1;
+    printf("Protocol Send - Listening for Payload Ack...\n");
+    if( !this->listen(handshake, handshake_bytes, incoming_hdr) ) {
+        // do something to stop attack
+    }
+    printf("Protocol Send - Payload Ack received from server(%zu bytes)\ngot: '", handshake_bytes);
+    this->print_bytes_as(handshake,handshake_bytes,"char");
+    printf("'\n");
 
     return true;
 }
@@ -281,6 +308,7 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     struct shinyarmor_hdr incoming_hdr;
 
     std::string temp = "Ack Ack Ack";
+    std::string payload_temp = "Payload Ack";
 
 
     if( this->listen(handshake, handshake_bytes, incoming_hdr) ) { //first listen
@@ -296,12 +324,23 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
         printf("'\n");
         this->send(handshake, temp.length(), incoming_hdr.src_port_num); //first
         
+        reset_shinarmor_hdr(incoming_hdr);
         /* Now the protocol is over, recieve the actual message! */
         printf("Protocol Listen - Listening for Payload from client...\n");
-        this->listen(buff, recieved_buff_bytes, incoming_hdr);
+        if( !this->listen(buff, recieved_buff_bytes, incoming_hdr) ) {
+            //stop attack
+        }
         printf("\nPayload (%zu bytes) next line\ngot: '", recieved_buff_bytes);
         this->print_bytes_as(buff, recieved_buff_bytes, "char");
         printf("'\n");
+
+
+        printf("Protocol Listen - Sending payload ack to client...\nsend: '");
+        memset(handshake,0,BUFLEN);
+        memcpy(handshake,payload_temp.c_str(),payload_temp.length());
+        this->print_bytes_as(handshake, payload_temp.length(), "char");
+        printf("'\n");
+        this->send(handshake, payload_temp.length(), incoming_hdr.src_port_num);
     }
 
     return true;
