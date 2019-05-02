@@ -1,6 +1,6 @@
 INSTALLDIR := ./
 CC         := /usr/bin/g++
-CFLAGS     += -Wall
+CFLAGS     += -Wall -pthread
 OBJECTS    := test_socket_main.o socket.o
 EXE        := test_socket_main
 

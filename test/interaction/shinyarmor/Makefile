@@ -1,6 +1,6 @@
 INSTALLDIR := ./
 CC         := /usr/bin/g++
-CFLAGS     += -Wall
+CFLAGS     += -Wall -pthread
 CLI_OBJECTS:= test_client_protocol_main.o endpoint.o socket.o shinyarmor_hdr.o
 SER_OBJECTS:= test_server_protocol_main.o endpoint.o socket.o shinyarmor_hdr.o
 OBJECTS	   := $(CLI_OBJECTS) $(SER_OBJECTS)
