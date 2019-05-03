@@ -57,7 +57,7 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
 
         bool run_protocol_send(unsigned char *, const size_t, unsigned int); 
         bool run_protocol_listen(unsigned char *, ssize_t);
-
+        bool asynch_listen(unsigned char *, ssize_t &, int timeout, struct shinyarmor_hdr&  = PLACE_HOLDER_SHINYARMOR);     /* WORK IN PROGRESS, for now hard coded hack into the endpoint::listen() */
 
 };
                

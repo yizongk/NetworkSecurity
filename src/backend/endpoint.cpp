@@ -5,6 +5,8 @@
 #include <future>       /* std::async, std::future */
 #include <chrono>       /* std::chrono::milliseconds */
 #include <functional>   /* std::bind */
+#include <iostream>     /* std::flush, std::cout, std::endl */
+#include <signal.h>     /* std::pthread_kill() */
 #include "endpoint.h"
 
 /* For default parameter value. For regression testing, where old src calls function that doesn't use to have certain parameter, due to being updated */
@@ -69,22 +71,24 @@ bool Endpoint::bootup() {
  * 
  */
 bool Endpoint::listen(unsigned char *payload, ssize_t &bytes, struct shinyarmor_hdr& income_hdr) {
+    printf("listen called\n");
     
     unsigned char *reciever = new unsigned char[this->max_buffer_len];
 
     //printf("Endpoint Listening()\n");
     while(true) {   // while it's not our port number
+        //printf("listen while()\n");
         
         memset(reciever,0,this->max_buffer_len);
         endpoint.recvMsg(reciever, this->max_buffer_len, bytes, this->incom_src_addr, this->incom_src_addr_len);
         memcpy(&income_hdr,reciever,sizeof(income_hdr));
-        if( this->packet_repeat(income_hdr) ) {
-            continue;
-        }
+       if( this->packet_repeat(income_hdr) ) {
+           continue;
+       }
         
-        if(income_hdr.dst_port_num == this->binded_port_num) {
-            break;
-        }
+       if(income_hdr.dst_port_num == this->binded_port_num) {
+           break;
+       }
     }
 
     // Add packet id to list of all processed packet id
@@ -258,17 +262,12 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     printf("send: 'Knock Knock...'\n");
     this->send(handshake, temp.length(), port_number); //first
      
-    std::future<bool> fut = std::async( std::bind( &Endpoint::listen, this, std::ref(handshake), std::ref(handshake_bytes), std::ref(incoming_hdr) ) );
     printf("Protocol Send - Listening for replying ack from server...\n");
-    std::chrono::milliseconds span(100);
-    while( fut.wait_for(span) == std::future_status::timeout );
-    bool status = fut.get();
-    if(status == true) {
-        printf("timeout did not happen\n");
-    } else {
-        printf("timeout!\n");
+    if( !this->asynch_listen(handshake, handshake_bytes, 1, incoming_hdr) ) {   //10000 millisecond = 10 seconds
+        printf("should stop now!!!!!\n");
         return false;
     }
+    
     /* if( !this->listen(handshake, handshake_bytes, incoming_hdr) ){      // M<AYBE TIME THIS CALL, don't need to modify listen, just need to time it
         // dosomething to stop attack
     }  */
@@ -277,7 +276,7 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     this->print_bytes_as(handshake,handshake_bytes,"char");
     printf("'\n");
 
-    printf("Protocol Send - Payload Sending...\n");
+    /* printf("Protocol Send - Payload Sending...\n");
     printf("send: '");
     this->print_bytes_as(buffer,buf_size,"char");
     printf("'\n");
@@ -293,7 +292,7 @@ bool Endpoint::run_protocol_send(unsigned char *buffer, const size_t buf_size, c
     printf("Protocol Send - Payload Ack received from server(%zu bytes)\ngot: '", handshake_bytes);
     this->print_bytes_as(handshake,handshake_bytes,"char");
     printf("'\n");
-
+ */
     return true;
 }
 
@@ -307,7 +306,7 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
     memset(handshake,0,BUFLEN);
     struct shinyarmor_hdr incoming_hdr;
 
-    std::string temp = "Ack Ack Ack";
+    std::string temp = "Handshake Ack";
     std::string payload_temp = "Payload Ack";
 
 
@@ -345,3 +344,40 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
 
     return true;
 }
+
+/* 
+ *  A api call with endpoint::listen(), this function allows it to be timedout, and end prematureally
+ *  Return turns if not timed-out, and return false if timed-out.
+ *  WIP WIP WIP WIP WIP
+ *  */
+bool Endpoint::asynch_listen(unsigned char *incoming_payload, ssize_t &incoming_bytes, int timeout, struct shinyarmor_hdr& incoming_hdr) {
+    printf("async running listening");
+
+    std::future<bool> 
+    fut = std::async( std::bind( &Endpoint::listen, this, std::ref(incoming_payload), std::ref(incoming_bytes), std::ref(incoming_hdr) ) );
+    std::chrono::seconds span(1);
+    //std::chrono::system_clock::time_point span = std::chrono::system_clock::now() + std::chrono::seconds(2);
+  
+    if( fut.wait_for(span)==std::future_status::timeout ) {
+        //std::cout << '.' << std::flush;
+        std::cout << "timed out" << std::endl;
+    }
+    printf("past the condition\n");
+    /* if( fut.valid() ) {
+        printf("valid fut\n");
+    } else {
+        printf("invalid fut\n");
+    } */
+    /* std::cout << "before fut.get()" << std::endl;
+    bool status = fut.get();
+    std::cout << status << std::endl;
+    if(status == true) {
+        printf("timeout did not happen\n");
+        return true;
+    } else {
+        printf("timeout!\n");
+        return false;
+    } */
+
+    return true;
+}   
