@@ -34,6 +34,9 @@ int main(int argc, char *argv[]) {
             cout << "message too long(less than 100 characters)" << endl;
             cout << "---------------------------------------------\n" << endl;
             
+            int c_msg = 1;
+            int t_msg = (temp.size() / 100) + 1;
+            cout << t_msg << endl;
             int curr_index = 0;
             size_t chunk_s = MAX_MSG_LEN;
             while(curr_index < temp.size()){
@@ -47,16 +50,17 @@ int main(int argc, char *argv[]) {
                 /* printf("DEBUG: Buf:'");
                 dummyClient.print_bytes_as(out_buf,temp.size(),"char");
                 printf("' (Payload to be sent)\n"); */
-                dummyClient.run_protocol_send(out_buf, temp_partial.length(), SERVER_PORT_NUM);
+                dummyClient.run_protocol_multisend(out_buf, temp_partial.length(), SERVER_PORT_NUM, c_msg, t_msg );
                 cout << "---------------------------------------------\n" << endl;
 
                 int last_chunk = temp.size() - curr_index;
                 if(curr_index < temp.size() && last_chunk < 100){
 
                     chunk_s = last_chunk;
+                    
                 }
                 curr_index += 100;
-
+                c_msg++;
 
              }
 

@@ -57,7 +57,7 @@ class Endpoint {            // BIND THIS TO A PORT NUMBER AND LISTEN WILL GUARAN
 
         bool run_protocol_send(unsigned char *, const size_t, unsigned int); 
         bool run_protocol_listen(unsigned char *, ssize_t);
-
+        bool run_protocol_multisend(unsigned char *, const size_t, unsigned int, int, int);
 
 };
                

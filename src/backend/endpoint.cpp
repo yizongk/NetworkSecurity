@@ -306,3 +306,43 @@ bool Endpoint::run_protocol_listen(unsigned char *buff, ssize_t recieved_buff_by
 
     return true;
 }
+
+// Add fcts here to 
+/* Protocol for multi send:
+ * ...
+ * Need to identify where we can return false in this function. 
+ */
+bool Endpoint::run_protocol_multisend(unsigned char *buffer, const size_t buf_size, const unsigned int port_number, int curr_msg, int total_msg) {
+      
+    ssize_t handshake_bytes = -1;
+    unsigned char *handshake = new unsigned char[BUFLEN];
+    memset(handshake,0,BUFLEN);
+    struct shinyarmor_hdr incoming_hdr;
+
+    std::string temp = "Knock Knock...";
+    memcpy(handshake,temp.c_str(),temp.length());
+
+    printf("\nProtocol Send - Handshake Sending to server...\n");
+    printf("send: 'Knock Knock...'\n");
+    this->send(handshake, temp.length(), port_number); //first
+     
+    printf("Protocol Send - Listening for replying ack from server...\n");
+    this->listen(handshake, handshake_bytes, incoming_hdr); //first
+    printf("Protocol Send - Ack Received from server(%zu bytes)\ngot: '", handshake_bytes);
+    this->print_bytes_as(handshake,handshake_bytes,"char");
+    printf("\n");
+
+    printf("Protocol Send - Payload Sending...\n");
+    printf("send: '");
+    this->print_bytes_as(buffer,buf_size,"char");
+    printf("'\n");
+    this->send(buffer, buf_size, port_number); //first
+
+    printf("Current Message Number - (%d/%d) \n", curr_msg, total_msg );
+    if( curr_msg == total_msg ){
+
+        printf("Final Message Sent \n");
+    }
+
+    return true;
+}
