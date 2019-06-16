@@ -1,0 +1,46 @@
+Idea: Have an mobile and desktop app that will help user track their fitness by comparing it to all the other user of the app.
+
+The workflow we will use will be:
+-Github
+-AGILE developement methology
+
+*************FEATURES*************
+-Fitness element to track:
+  -Body Info
+    -fat %
+    -muscle %;
+    -Index Body Mass
+
+  -Intake
+    -calories
+    -protein
+    -carbs
+    -vitatmins
+
+-Community outreach
+  -A online chat room between all user of the app(including different platforms)
+  
+
+*************TECHINICAL STUFF*************
+-Backend
+  -what stack framework?
+    -POST with html?
+    -socket?
+  -What sort of API connecting to the front end?
+    -Through what port?
+    -Chatroom API
+    -User data API (the meat of the stuff that will be transfering between front end app and backend)
+-Frontend
+  -What platform?
+    -Linux
+      -What language?
+    -Window
+      -what language?
+    -MAC
+      -What language?
+    -Andriod
+      -What language?
+    -IOS
+      -What language?
+  -conformed UI between the different platform
+    -How will it look?
